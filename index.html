@@ -1,0 +1,926 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Diary Notes</title>
+    <style>
+      /* Dark Red and Purple Color Theme */
+      :root {
+        --base-bg: #1a1a1a;
+        --base-text: #f0f0f0;
+        --primary-color: #c2a3c7; /* Light Purple */
+        --secondary-color: #e06464; /* Light Red */
+        --secondary-bg: #2e2e2e;
+        --border-color: #555;
+        --button-bg: #d32f2f; /* Dark Red */
+        --button-hover-bg: #b71c1c; /* Even Darker Red */
+      }
+
+      /* General Styles */
+      body {
+        font-family: "Arial", sans-serif;
+        margin: 20px;
+        background-color: var(--base-bg);
+        color: var(--base-text);
+        overflow-x: hidden;
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--primary-color);
+        margin-bottom: 20px;
+        animation: subtlePulse 7s infinite alternate;
+      }
+
+      #search-container {
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        animation: subtleSlideIn 1s ease-out;
+      }
+
+      #search-input {
+        padding: 8px;
+        width: 250px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        background-color: #333;
+        color: var(--base-text);
+        animation: gentleFloat 8s infinite alternate;
+      }
+
+      #search-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+
+      #new-subject-form {
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: var(--secondary-bg);
+        border-radius: 5px;
+        animation: subtleSlideIn 1s ease-out;
+      }
+
+      #new-subject-name {
+        padding: 8px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        background-color: #333;
+        color: var(--base-text);
+        width: 200px;
+        animation: gentleFloat 8s infinite alternate;
+      }
+
+      #new-subject-name:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+
+      /* Table Styles */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        background-color: var(--secondary-bg);
+        color: var(--base-text);
+        border-radius: 5px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        animation: subtleTableWave 10s infinite alternate; /* New table animation */
+      }
+
+      th,
+      td {
+        border: 1px solid var(--border-color);
+        padding: 12px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #333;
+        color: var(--primary-color);
+      }
+
+      tbody tr:nth-child(even) {
+        background-color: #2a2a2a;
+      }
+
+      tbody tr:hover {
+        background-color: #3d3d3d;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+
+      .actions {
+        text-align: center;
+      }
+
+      button {
+        padding: 10px 15px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        background-color: var(--button-bg);
+        color: white;
+        cursor: pointer;
+        transition:
+          background-color 0.3s ease,
+          transform 0.2s ease;
+        animation: gentleScale 10s infinite alternate;
+      }
+
+      button:hover {
+        background-color: var(--button-hover-bg);
+        transform: scale(1.05);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+      }
+
+      /* Notes Section */
+      #notes-section {
+        margin-top: 20px;
+        padding: 20px;
+        background-color: var(--secondary-bg);
+        border-radius: 5px;
+        display: none;
+        animation: subtleSlideIn 1s ease-out;
+      }
+
+      #notes-section h2 {
+        color: var(--primary-color);
+        animation: subtleFadeIn 8s infinite alternate;
+      }
+
+      #new-note-form textarea {
+        width: 95%;
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        background-color: #333;
+        color: var(--base-text);
+        resize: vertical;
+        animation: gentleHueRotate 12s infinite linear;
+      }
+
+      .important-note {
+        font-weight: bold;
+        color: var(--secondary-color);
+        animation: subtleGlow 10s infinite alternate;
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateY(-20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes popIn {
+        0% {
+          transform: scale(0.5);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .note-row {
+        animation: popIn 0.3s ease-out;
+      }
+
+      /* Popup styles */
+      .note-popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        display: none;
+      }
+
+      .note-popup {
+        background-color: var(--secondary-bg);
+        color: var(--base-text);
+        border-radius: 5px;
+        padding: 20px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+        width: 80%;
+        max-width: 600px;
+        position: relative;
+        animation: subtleZoom 1s ease-out;
+      }
+
+      .note-popup .close-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: none;
+        color: var(--base-text);
+        font-size: 16px;
+        cursor: pointer;
+        animation: gentleRotate 15s infinite linear;
+      }
+
+      /* Textarea */
+      textarea {
+        background-color: #333;
+        color: var(--base-text);
+        border: 1px solid var(--border-color);
+        border-radius: 5px;
+        padding: 8px;
+        margin-bottom: 10px;
+        width: 95%;
+      }
+
+      /* Subdued Animations */
+
+      @keyframes subtlePulse {
+        0% {
+          transform: scale(1);
+          opacity: 0.8;
+        }
+        100% {
+          transform: scale(1.02);
+          opacity: 1;
+        }
+      }
+
+      @keyframes subtleZoom {
+        0% {
+          transform: scale(0.98);
+          opacity: 0.9;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      @keyframes gentleHueRotate {
+        from {
+          filter: hue-rotate(0deg);
+        }
+        to {
+          filter: hue-rotate(5deg); /* Very subtle */
+        }
+      }
+
+      /* New Table Animation */
+      @keyframes subtleTableWave {
+        0% {
+          transform: translateY(0) rotateX(0deg);
+        }
+        50% {
+          transform: translateY(-1px) rotateX(2deg);
+          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+        }
+        100% {
+          transform: translateY(0) rotateX(0deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Diary Notes</h1>
+
+    <div id="search-container">
+      <input
+        type="text"
+        id="search-input"
+        placeholder="Search subjects or notes..."
+      />
+      <button onclick="search()">Search</button>
+    </div>
+
+    <div id="new-subject-form">
+      <input type="text" id="new-subject-name" placeholder="New subject name" />
+      <button onclick="addSubject()">Add Subject</button>
+    </div>
+
+    <table id="subject-table">
+      <thead>
+        <tr>
+          <th>Subject Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Subjects will be dynamically added here -->
+      </tbody>
+    </table>
+
+    <div id="notes-section">
+      <h2>Notes for <span id="current-subject-name"></span></h2>
+
+      <div id="new-note-form">
+        <textarea id="new-note-text" placeholder="New note text"></textarea>
+        <button onclick="addNote()">Add Note</button>
+      </div>
+
+      <button onclick="sortNotes()">Sort Alphabetically</button>
+      <button onclick="sortNotesChronologically()">Sort Chronologically</button>
+      <button onclick="hideNotes()">Hide Notes</button>
+
+      <table id="note-table">
+        <thead>
+          <tr>
+            <th>Note Text</th>
+            <th>Date/Time</th>
+            <th>!</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Notes will be dynamically added here -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Note Popup Overlay -->
+    <div class="note-popup-overlay" id="note-popup-overlay">
+      <div class="note-popup" id="note-popup">
+        <button class="close-button" onclick="closeNotePopup()">X</button>
+        <h3 id="popup-subject-name"></h3>
+        <p id="popup-note-text"></p>
+        <p id="popup-note-datetime"></p>
+
+        <div class="actions">
+          <button onclick="editNoteInPopup()">Edit</button>
+          <button onclick="deleteNoteInPopup()">Delete</button>
+          <button onclick="toggleImportantInPopup()">Mark Important</button>
+        </div>
+
+        <input type="hidden" id="popup-subject-id" />
+        <input type="hidden" id="popup-note-id" />
+      </div>
+    </div>
+
+    <audio id="backgroundMusic" loop autoplay style="display: none">
+      <source id="musicSource" src="ROYA - Cruise.mp3" type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
+
+    <script>
+      let diaryData = {
+        subjects: [],
+      };
+
+      let currentSubjectId = null;
+      let currentSortOrder = "desc";
+
+      // Load data from local storage
+      function loadData() {
+        const storedData = localStorage.getItem("diaryData");
+        if (storedData) {
+          diaryData = JSON.parse(storedData);
+        }
+        renderSubjects();
+
+        //Play Music Function
+        playBackgroundMusic();
+      }
+
+      function playBackgroundMusic() {
+        let audio = document.getElementById("backgroundMusic");
+        if (audio) {
+          audio
+            .play()
+            .then(() => {
+              console.log("Audio is playing");
+            })
+            .catch((error) => {
+              console.error(
+                "Audio autoplay was prevented. User interaction required.",
+                error,
+              );
+
+              //Optionally show a button to let the user start the music
+              //Create a button element
+              let playButton = document.createElement("button");
+              playButton.textContent = "Play Music";
+              playButton.style.position = "fixed";
+              playButton.style.top = "20px";
+              playButton.style.left = "20px";
+
+              //Function to start music on button click
+              playButton.onclick = function () {
+                audio
+                  .play()
+                  .then(() => {
+                    console.log("Audio started by user.");
+                    playButton.style.display = "none"; //Hide the button
+                  })
+                  .catch((err) =>
+                    console.error(
+                      "Failed to start audio even after user interaction.",
+                      err,
+                    ),
+                  );
+              };
+
+              document.body.appendChild(playButton); //Add button to the page
+            });
+        } else {
+          console.warn("Audio element not found");
+        }
+      }
+
+      // Save data to local storage
+      function saveData() {
+        localStorage.setItem("diaryData", JSON.stringify(diaryData));
+      }
+
+      // Function to generate a unique ID
+      function generateId() {
+        return (
+          Math.random().toString(36).substring(2, 15) +
+          Math.random().toString(36).substring(2, 15)
+        );
+      }
+
+      // Add a new subject
+      function addSubject() {
+        const subjectName = document
+          .getElementById("new-subject-name")
+          .value.trim();
+        if (subjectName) {
+          const newSubject = {
+            id: generateId(),
+            name: subjectName,
+            notes: [],
+          };
+          diaryData.subjects.push(newSubject);
+          saveData();
+          renderSubjects();
+          document.getElementById("new-subject-name").value = "";
+        } else {
+          alert("Subject name cannot be empty.");
+        }
+      }
+
+      // Render the subjects in the table
+      function renderSubjects() {
+        const subjectTableBody = document.querySelector("#subject-table tbody");
+        subjectTableBody.innerHTML = "";
+
+        diaryData.subjects.forEach((subject) => {
+          const row = subjectTableBody.insertRow();
+
+          const nameCell = row.insertCell();
+          nameCell.textContent = subject.name;
+
+          const actionsCell = row.insertCell();
+          actionsCell.classList.add("actions");
+
+          const viewButton = document.createElement("button");
+          viewButton.textContent = "View Notes";
+          viewButton.onclick = () => showNotes(subject.id);
+          actionsCell.appendChild(viewButton);
+
+          const editButton = document.createElement("button");
+          editButton.textContent = "Edit";
+          editButton.onclick = () => editSubject(subject.id);
+          actionsCell.appendChild(editButton);
+
+          const deleteButton = document.createElement("button");
+          deleteButton.textContent = "Delete";
+          deleteButton.onclick = () => deleteSubject(subject.id);
+          actionsCell.appendChild(deleteButton);
+        });
+      }
+
+      // Edit an existing subject
+      function editSubject(subjectId) {
+        const subject = diaryData.subjects.find(
+          (subject) => subject.id === subjectId,
+        );
+        if (subject) {
+          const newName = prompt("Enter new subject name:", subject.name);
+          if (newName !== null && newName.trim() !== "") {
+            subject.name = newName.trim();
+            saveData();
+            renderSubjects();
+          }
+        }
+      }
+
+      // Delete a subject
+      function deleteSubject(subjectId) {
+        if (confirm("Are you sure you want to delete this subject?")) {
+          diaryData.subjects = diaryData.subjects.filter(
+            (subject) => subject.id !== subjectId,
+          );
+          saveData();
+          renderSubjects();
+          if (currentSubjectId === subjectId) {
+            hideNotes();
+          }
+        }
+      }
+
+      // Show notes for a selected subject
+      function showNotes(subjectId) {
+        currentSubjectId = subjectId;
+        const subject = diaryData.subjects.find(
+          (subject) => subject.id === subjectId,
+        );
+
+        if (subject) {
+          document.getElementById("current-subject-name").textContent =
+            subject.name;
+          document.getElementById("notes-section").style.display = "block";
+          renderNotes(subjectId);
+        }
+      }
+
+      // Hide the notes section
+      function hideNotes() {
+        document.getElementById("notes-section").style.display = "none";
+        currentSubjectId = null;
+      }
+
+      // Add a new note to the current subject
+      function addNote() {
+        if (!currentSubjectId) {
+          alert("No subject selected.");
+          return;
+        }
+
+        const noteText = document.getElementById("new-note-text").value.trim();
+        if (noteText) {
+          const subject = diaryData.subjects.find(
+            (subject) => subject.id === currentSubjectId,
+          );
+          if (subject) {
+            const newNote = {
+              id: generateId(),
+              text: noteText,
+              important: false,
+              createdAt: new Date().toISOString(),
+            };
+            subject.notes.push(newNote);
+            saveData();
+            renderNotes(currentSubjectId);
+            document.getElementById("new-note-text").value = "";
+          }
+        } else {
+          alert("Note text cannot be empty.");
+        }
+      }
+
+      // Render the notes for the current subject
+      function renderNotes(subjectId) {
+        const noteTableBody = document.querySelector("#note-table tbody");
+        noteTableBody.innerHTML = "";
+
+        const subject = diaryData.subjects.find(
+          (subject) => subject.id === subjectId,
+        );
+        if (subject) {
+          // Sort notes based on current sort order
+          if (currentSortOrder === "asc") {
+            subject.notes.sort(
+              (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
+            );
+          } else {
+            subject.notes.sort(
+              (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+            );
+          }
+
+          subject.notes.forEach((note) => {
+            const row = noteTableBody.insertRow();
+            row.classList.add("note-row");
+
+            row.addEventListener("click", function () {
+              openNotePopup(
+                subject.id,
+                subject.name,
+                note.id,
+                note.text,
+                new Date(note.createdAt).toLocaleString(),
+              );
+            });
+
+            const noteCell = row.insertCell();
+            noteCell.textContent = note.text;
+
+            const dateCell = row.insertCell();
+            dateCell.textContent = new Date(note.createdAt).toLocaleString();
+
+            const importantCell = row.insertCell();
+            importantCell.textContent = note.important ? "!" : "";
+
+            const actionsCell = row.insertCell();
+            actionsCell.classList.add("actions");
+
+            const editButton = document.createElement("button");
+            editButton.textContent = "Edit";
+            editButton.onclick = () => editNote(subjectId, note.id);
+            actionsCell.appendChild(editButton);
+
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.onclick = () => deleteNote(subjectId, note.id);
+            actionsCell.appendChild(deleteButton);
+
+            const toggleImportantButton = document.createElement("button");
+            toggleImportantButton.textContent = note.important
+              ? "Unmark"
+              : "Mark Important";
+            toggleImportantButton.onclick = () =>
+              toggleImportant(subjectId, note.id);
+            actionsCell.appendChild(toggleImportantButton);
+          });
+        }
+      }
+
+      // Edit an existing note
+      function editNote(subjectId, noteId) {
+        const subject = diaryData.subjects.find(
+          (subject) => subject.id === subjectId,
+        );
+        if (subject) {
+          const note = subject.notes.find((note) => note.id === noteId);
+          if (note) {
+            const newText = prompt("Enter new note text:", note.text);
+            if (newText !== null && newText.trim() !== "") {
+              note.text = newText.trim();
+              saveData();
+              renderNotes(subjectId);
+            }
+          }
+        }
+      }
+
+      // Delete a note
+      function deleteNote(subjectId, noteId) {
+        const subject = diaryData.subjects.find(
+          (subject) => subject.id === subjectId,
+        );
+        if (subject) {
+          subject.notes = subject.notes.filter((note) => note.id !== noteId);
+          saveData();
+          renderNotes(subjectId);
+        }
+      }
+
+      // Toggle the 'important' status of a note
+      function toggleImportant(subjectId, noteId) {
+        const subject = diaryData.subjects.find(
+          (subject) => subject.id === subjectId,
+        );
+        if (subject) {
+          const note = subject.notes.find((note) => note.id === noteId);
+          if (note) {
+            note.important = !note.important;
+            saveData();
+            renderNotes(subjectId);
+          }
+        }
+      }
+
+      // Sort notes alphabetically
+      function sortNotes() {
+        if (!currentSubjectId) {
+          alert("No subject selected.");
+          return;
+        }
+
+        const subject = diaryData.subjects.find(
+          (subject) => subject.id === currentSubjectId,
+        );
+        if (subject) {
+          subject.notes.sort((a, b) => a.text.localeCompare(b.text));
+          saveData();
+          renderNotes(currentSubjectId);
+        }
+      }
+
+      // Sort notes chronologically
+      function sortNotesChronologically() {
+        if (!currentSubjectId) {
+          alert("No subject selected.");
+          return;
+        }
+        // Toggle sort order
+        currentSortOrder = currentSortOrder === "asc" ? "desc" : "asc";
+        renderNotes(currentSubjectId);
+      }
+
+      // Search function
+      function search() {
+        const searchTerm = document
+          .getElementById("search-input")
+          .value.toLowerCase();
+        const searchResults = [];
+
+        diaryData.subjects.forEach((subject) => {
+          if (subject.name.toLowerCase().includes(searchTerm)) {
+            searchResults.push({
+              type: "subject",
+              subjectId: subject.id,
+              name: subject.name,
+              content: subject.name,
+            });
+          }
+
+          subject.notes.forEach((note) => {
+            if (note.text.toLowerCase().includes(searchTerm)) {
+              searchResults.push({
+                type: "note",
+                subjectId: subject.id,
+                noteId: note.id,
+                name: subject.name,
+                content: note.text,
+              });
+            }
+          });
+        });
+
+        displaySearchResults(searchResults);
+      }
+
+      // Display search results in the table
+      function displaySearchResults(results) {
+        const subjectTableBody = document.querySelector("#subject-table tbody");
+        subjectTableBody.innerHTML = "";
+
+        if (results.length === 0) {
+          const noResultsRow = subjectTableBody.insertRow();
+          const noResultsCell = noResultsRow.insertCell();
+          noResultsCell.textContent = "No search results found.";
+          noResultsCell.colSpan = 2;
+        } else {
+          results.forEach((result) => {
+            const row = subjectTableBody.insertRow();
+
+            const nameCell = row.insertCell();
+            nameCell.textContent =
+              result.type === "subject"
+                ? `Subject: ${result.content}`
+                : `Note in ${result.name}: ${result.content}`;
+
+            const actionsCell = row.insertCell();
+            actionsCell.classList.add("actions");
+
+            const viewButton = document.createElement("button");
+            viewButton.textContent = "View";
+            viewButton.onclick = () => {
+              if (result.type === "subject") {
+                showNotes(result.subjectId);
+              } else {
+                showNotes(result.subjectId);
+              }
+            };
+            actionsCell.appendChild(viewButton);
+          });
+        }
+      }
+
+      // --- Popup Functions ---
+      function openNotePopup(
+        subjectId,
+        subjectName,
+        noteId,
+        noteText,
+        noteDateTime,
+      ) {
+        document.getElementById("popup-subject-name").textContent =
+          `Subject: ${subjectName}`;
+        document.getElementById("popup-note-text").textContent = noteText;
+        document.getElementById("popup-note-datetime").textContent =
+          noteDateTime;
+
+        document.getElementById("popup-subject-id").value = subjectId;
+        document.getElementById("popup-note-id").value = noteId;
+
+        document.getElementById("note-popup-overlay").style.display = "flex";
+
+        // Apply animations to popup content
+        document.getElementById("popup-subject-name").style.animation =
+          `subtlePulse 7s infinite alternate`;
+        document.getElementById("popup-note-text").style.animation =
+          `subtleZoom 3s ease-in-out`;
+        document.getElementById("popup-note-datetime").style.animation =
+          `gentleHueRotate 12s infinite linear`;
+      }
+
+      function closeNotePopup() {
+        document.getElementById("note-popup-overlay").style.display = "none";
+      }
+
+      function editNoteInPopup() {
+        const subjectId = document.getElementById("popup-subject-id").value;
+        const noteId = document.getElementById("popup-note-id").value;
+        editNote(subjectId, noteId);
+        closeNotePopup();
+      }
+
+      function deleteNoteInPopup() {
+        const subjectId = document.getElementById("popup-subject-id").value;
+        const noteId = document.getElementById("popup-note-id").value;
+        deleteNote(subjectId, noteId);
+        closeNotePopup();
+      }
+
+      function toggleImportantInPopup() {
+        const subjectId = document.getElementById("popup-subject-id").value;
+        const noteId = document.getElementById("popup-note-id").value;
+        toggleImportant(subjectId, noteId);
+        closeNotePopup();
+      }
+
+      // Initial load
+      loadData();
+    </script>
+    <style>
+      /* Modified Animations */
+      @keyframes subtlePulse {
+        0% {
+          transform: scale(1);
+          opacity: 0.8;
+        }
+        100% {
+          transform: scale(1.02);
+          opacity: 1;
+        }
+      }
+
+      @keyframes subtleZoom {
+        0% {
+          transform: scale(0.98);
+          opacity: 0.9;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      @keyframes gentleHueRotate {
+        from {
+          filter: hue-rotate(0deg);
+        }
+        to {
+          filter: hue-rotate(5deg); /* Very subtle */
+        }
+      }
+
+      /* New Table Animation */
+      @keyframes subtleTableWave {
+        0% {
+          transform: translateY(0) rotateX(0deg);
+        }
+        50% {
+          transform: translateY(-1px) rotateX(2deg);
+          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+        }
+        100% {
+          transform: translateY(0) rotateX(0deg);
+        }
+      }
+    </style>
+  </body>
+</html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React + TS</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script src="https://api.tempolabs.ai/proxy-asset?url=https://storage.googleapis.com/tempo-public-assets/error-handling.js"></script>
+  </body>
+</html>

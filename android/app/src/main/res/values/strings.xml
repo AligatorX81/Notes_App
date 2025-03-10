@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">HTML/JS Code Completion Tool</string>
+    <string name="title_activity_main">HTML/JS Code Completion Tool</string>
+    <string name="package_name">com.htmljscompletion.app</string>
+    <string name="custom_url_scheme">com.htmljscompletion.app</string>
+</resources>
