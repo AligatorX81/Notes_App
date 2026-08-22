@@ -305,6 +305,113 @@
           transform: translateY(0) rotateX(0deg);
         }
       }
+
+      /* ===== Desktop / laptop layout ===== */
+      @media (min-width: 1024px) {
+        body {
+          max-width: 1400px;
+          margin: 0 auto;
+          padding: 32px 40px 64px;
+        }
+
+        h1 {
+          font-size: 2.6rem;
+          margin-bottom: 28px;
+        }
+
+        #search-input {
+          width: 360px;
+          font-size: 1rem;
+        }
+
+        #new-subject-name {
+          width: 320px;
+          font-size: 1rem;
+        }
+
+        th,
+        td {
+          padding: 14px 16px;
+        }
+
+        /* On a wide screen a full bleed subject list is mostly empty space, so
+           keep the single column view to a comfortable reading width. */
+        #new-subject-form,
+        #subject-table {
+          max-width: 960px;
+        }
+
+        .note-popup {
+          max-width: 760px;
+        }
+
+        /* Two column workspace: subjects on the left, the open subject's notes
+           on the right. The split only kicks in once a subject is opened, since
+           showNotes() sets #notes-section to display: block. */
+        body:has(#notes-section[style*="block"]) {
+          display: grid;
+          grid-template-columns: minmax(380px, 34%) minmax(0, 1fr);
+          grid-template-areas:
+            "title    title"
+            "search   search"
+            "form     notes"
+            "subjects notes";
+          /* The notes panel spans the last two rows; making the final row the
+             flexible one keeps the subject table tucked under the add-subject
+             form instead of the spare height being split between them. */
+          grid-template-rows: auto auto auto 1fr;
+          column-gap: 32px;
+          align-items: start;
+        }
+
+        body:has(#notes-section[style*="block"]) > h1 {
+          grid-area: title;
+        }
+
+        body:has(#notes-section[style*="block"]) > #search-container {
+          grid-area: search;
+        }
+
+        body:has(#notes-section[style*="block"]) > #new-subject-form {
+          grid-area: form;
+        }
+
+        body:has(#notes-section[style*="block"]) > #new-subject-form,
+        body:has(#notes-section[style*="block"]) > #subject-table {
+          max-width: none;
+        }
+
+        body:has(#notes-section[style*="block"]) > #subject-table {
+          grid-area: subjects;
+        }
+
+        body:has(#notes-section[style*="block"]) > #notes-section {
+          grid-area: notes;
+          margin-top: 0;
+          position: sticky;
+          top: 32px;
+          max-height: calc(100vh - 64px);
+          overflow-y: auto;
+        }
+
+        /* The subject column is narrower than the page, so keep its three row
+           buttons compact instead of letting them blow the column out. */
+        body:has(#notes-section[style*="block"]) #subject-table button {
+          padding: 8px 12px;
+          margin: 3px;
+        }
+
+        body:has(#notes-section[style*="block"]) #subject-table th,
+        body:has(#notes-section[style*="block"]) #subject-table td {
+          padding: 10px 12px;
+        }
+
+        body:has(#notes-section[style*="block"]) #search-input,
+        body:has(#notes-section[style*="block"]) #new-subject-name {
+          width: 100%;
+          max-width: 360px;
+        }
+      }
     </style>
   </head>
   <body>
