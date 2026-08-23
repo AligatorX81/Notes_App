@@ -41,8 +41,8 @@ Konfiguracija: **6 motora, 5 stepeni slobode, 2 cikloidna reduktora** (rame i la
 | Motor | Tip ose | Funkcija | Cikloidni? | Prenos ako nema cikloidnog |
 |-------|---------|----------|-----------|----------------------------|
 | M1 | yaw (vertikalna) | rotacija baze | ne | remen ili planetarni, ~4:1 |
-| M2 | pitch | **rame / elevacija** (opseg nesto ispod 180°) | **da** | — |
-| M3 | pitch | **lakat / elevacija** | **da** | — |
+| M2 | pitch | **rame / elevacija** (opseg nesto ispod 180°) | **da 40:1** | — |
+| M3 | pitch | **lakat / elevacija** | **da 20:1** | — |
 | M4 | roll | uvrtanje **podlaktice** (iza lakta) | ne | zupcasti remen |
 | M5 | **pitch** | savijanje grippera, ugao prilaza | ne | **puzni prenos** (samokociv) |
 | M6 | linearni/prstasti | gripper otvaranje/zatvaranje | ne | aktuator, nije zglob |
@@ -81,10 +81,10 @@ projektovati i stampati nezavisno.
 ```
 BAZA
  └─[M1 yaw]──────── rotacija cele ruke
-     └─[M2 pitch]── CIKLOIDNI ~35:1   elevacija cele ruke (<180°)
+     └─[M2 pitch]── CIKLOIDNI 40:1    elevacija cele ruke (<180°)
          │
       NADLAKTICA
-         └─[M3 pitch]── CIKLOIDNI ~28:1   elevacija podlaktice   (lakat)
+         └─[M3 pitch]── CIKLOIDNI 20:1    elevacija podlaktice   (lakat)
              └─[M4 roll]── remen              uvrtanje podlaktice
                  │
               PODLAKTICA
@@ -166,15 +166,51 @@ Dva motora na istom zglobu su koncentrisana masa na sredini ruke i direktno
 opterecuju M2. Ako se pokaze kao problem, motor za roll se moze pomeriti blize
 korenu i pogon preneti remenom.
 
-## 3. Orijentacione vrednosti prenosa (cikloidni)
+## 3. Prenosni odnosi i dimenzije cikloidnih stepena
 
-| Zglob | Predlog odnosa | Razlog |
-|-------|----------------|--------|
-| M2 (rame) | ~35–40:1 | nosi celu ruku + teret na punom kraku |
-| M3 (lakat) | ~25–30:1 | nosi podlakticu, saku, gripper + teret |
+**Motori: iskljucivo NEMA17.** To je zadata granica, ne izbor — svi odnosi ispod
+su izvedeni iz nje.
 
-Konacne vrednosti se fiksiraju tek posle proracuna momenata (korak 3 u sekciji 7),
-kada budu poznati domet i nosivost.
+Ulazni podaci: domet **600 mm**, teret **500 g** na punom dometu, NEMA17 "jaki"
+(42x48, ~0.59 Nm).
+
+| Zglob | Odnos | Pinova | R | Ø diska | Masa sklopa | Na osovini | Rezerva |
+|-------|-------|--------|---|---------|-------------|------------|---------|
+| **M2 rame** | **40:1** | 41 | 58.7 mm | ~132 mm | ~600 g | 0.36 Nm | **+63%** |
+| **M3 lakat** | **20:1** | 21 | 30.1 mm | ~75 mm | ~180 g | 0.27 Nm | **+116%** |
+
+Pinovi: **Ø4 mm** celicni cilindricni zatik. Korak pinova 9 mm na oba stepena.
+
+### Zasto lakat namerno ima NIZAK odnos
+
+Disk od 75 mm umesto 118 mm stedi **~230 g na sredini ruke**, a ta masa ide
+pravo u opterecenje ramena — sa 11.45 na 10.86 Nm. Lakat ne treba visok odnos
+(moment u laktu je svega 4.1 Nm), pa se visak odnosa placa masom bez koristi.
+
+### Granica ekscentriciteta ne zavisi od odnosa
+
+```
+E_max = R / N = korak_pina / (2*pi)
+```
+
+Ako se R skalira sa brojem pinova tako da korak ostane isti, granica je
+**konstantna** — pri koraku od 9 mm iznosi 1.43 mm i na 20:1 i na 45:1.
+
+Visok odnos kosta **precnik i masu, ne preciznost.** (Ranija tvrdnja da visok
+odnos tera u uze tolerancije vazi samo pri fiksnom R.)
+
+### Rezerva pri vecem teretu
+
+| Teret | Rame @40:1 | Rezerva (jaki NEMA17) |
+|-------|------------|------------------------|
+| 500 g | 0.36 Nm | +63% |
+| 750 g | 0.43 Nm | +36% |
+| 1000 g | 0.48 Nm | +23% |
+
+Nosivost do 1 kg je izvodljiva bez izmene odnosa. Konacnu vrednost potvrditi.
+
+**Kriticno za proveru:** tacna oznaka NEMA17 motora. Razlika izmedju 42x40
+(0.45 Nm) i 42x60 (0.72 Nm) je 60% i pomera sve gornje rezerve.
 
 ## 4. Elektronika — drajveri koracnih motora
 
@@ -201,15 +237,14 @@ TMC2240 (36V).
 
 Bez druge sine i bez 48 V. Posledica po izbor drajvera je u sekciji nize.
 
-**Sta TMC5160T Pro daje na 24 V:** ne napon, nego **struju**. Eksterni MOSFET-i
-dozvoljavaju znatno vise od TMC2240 (~2.1 A RMS). Ta struja je upotrebljiva samo
-ako je motor moze primiti — NEMA17 je nominalno 1.5–2.0 A. Dakle **5160T Pro na
-24 V otkljucava NEMA23** na ramenu i laktu, i to mu je jedina prava vrednost u
-ovom setupu.
+**TMC5160T Pro u ovom setupu nema svrhu.** Na 24 V daje struju, ne napon, a
+struja je upotrebljiva samo koliko je motor primi. **Radi se iskljucivo sa
+NEMA17** (~2 A), sto TMC2240 (2.1 A RMS) pokriva u celosti. 5160T Pro bi imao
+smisla samo uz NEMA23, sto nije opcija.
 
-**Ta rezerva se NE trosi na produzenje ruke.** Duza ruka ne daje veci moment
-nego ga trosi — krak mnozi opterecenje, pa produzenje smanjuje nosivost i
-linearno pogorsava tacnost u rezimu stampe (`3D-STAMPA-REZIM.md`).
+**Napomena:** duza ruka ne daje veci moment nego ga trosi — krak mnozi
+opterecenje, pa produzenje smanjuje nosivost i linearno pogorsava tacnost u
+rezimu stampe (`3D-STAMPA-REZIM.md`). Domet ostaje 600 mm.
 
 ### Naponske sine — kriticno
 
@@ -238,8 +273,7 @@ Raspored jumpera:
 
 | Slot | Drajver | Sina |
 |------|---------|------|
-| M2 rame | TMC5160T Pro | `MOTOR_POWER` 48 V |
-| M3 lakat | TMC5160T Pro | `MOTOR_POWER` 48 V |
+| M2, M3 | TMC2240 | `Main Power` 24 V |
 | M1, M4 | TMC2240 | `Main Power` 24 V |
 | M5, M6 | TMC2226 | `Main Power` 24 V |
 
