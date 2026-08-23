@@ -140,6 +140,25 @@ vezice kao rasterecenje.
 
 ---
 
+## Nosiva konstrukcija — karbonske cevi
+
+Stampani segment nije dovoljno krut za rezim stampe: PETG presek 40x40 sa zidom
+3 mm ugiba se **4.48 mm** na 600 mm, sto je vise od zazora reduktora.
+
+**Nosivi raspon preuzimaju 2x karbonske cevi Ø25x1 mm, razmaknute 30 mm** —
+ugib 0.29 mm, masa ~145 g po segmentu.
+
+Posledica za modelovanje: stampani delovi su **kucista zglobova i spojnice**, ne
+nosivi rasponi. Svaka spojnica mora imati:
+
+- leziste za cev sa naleganjem za lepak (zazor 0.1–0.15 mm, hrapava povrsina
+  ili zljebovi za lepak)
+- dovoljnu duzinu ulepljenja: najmanje 2x precnik cevi, dakle >= 50 mm
+- osiguranje protiv uvrtanja (zatik ili ravnina na cevi), jer sam lepak na
+  glatkom karbonu klizi pod momentom
+
+Detalji i brojke: `3D-STAMPA-REZIM.md`, sekcija 3.4.
+
 ## Orijentacija stampe
 
 Slojevi su najslabija ravan dela. Orijentisati tako da opterecenje **ne**

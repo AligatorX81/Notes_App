@@ -95,6 +95,57 @@ M3**. Na M4 i M5 se ne isplati.
 
 ---
 
+## 3.4 Sta redukcija radi za preciznost — i sta ne radi
+
+Cikloidni odnos 40:1 **jeste** uracunat u sve momente (0.59 Nm x 40 x 0.75 =
+17.7 Nm u zglobu). Bez njega ruka ne bi drzala ni samu sebe.
+
+Za **preciznost** vazi drugacije. Redukcija deli sa 40 samo greske nastale
+**pre** reduktora:
+
+| Izvor | U zglobu | Na 600 mm |
+|-------|----------|-----------|
+| mikrokorak 1/16 | 0.0028° | 0.029 mm |
+| greska koraka motora | 0.0023° | 0.024 mm |
+
+Te greske su prakticno obrisane. Ali ono sto nastaje **u reduktoru i posle
+njega** ne deli se ni sa cim:
+
+| Izvor | Na 600 mm |
+|-------|-----------|
+| zazor cikloidnog 0.05° (vrlo dobra izrada) | 0.52 mm |
+| zazor cikloidnog 0.10° (realno) | 1.05 mm |
+| **ugib konstrukcije** (PETG 40x40, zid 3 mm) | **4.48 mm** |
+
+Reduktor je i sam izvor zazora — ne uklanja ga, nego ga uvodi.
+
+### KRITICNO: ugib konstrukcije je dominantan izvor greske
+
+Veci je od zazora reduktora. Prioritet preciznosti nije samo u reduktoru, nego
+**prvenstveno u krutosti konstrukcije**.
+
+| Presek | Ugib @600 mm | Masa segmenta |
+|--------|--------------|---------------|
+| PETG 40x40, zid 3 mm | 4.48 mm | ~290 g |
+| PETG 60x60, zid 4 mm | 0.97 mm | ~680 g |
+| PETG 80x80, zid 5 mm | 0.32 mm | ~1140 g |
+| **2x karbonska cev Ø25x1 mm, razmak 30 mm** | **0.29 mm** | **~145 g** |
+
+**Preporuka: karbonske cevi kao nosiva kicma.** Stampani delovi postaju kucista
+zglobova i spojnice; nosivi raspon preuzimaju cevi ulepljene u njih. Karbon je
+~15x kruci od PETG-a i pritom 4x laksi od preseka koji bi dao slican ugib — a
+manja masa dodatno smanjuje moment na ramenu.
+
+### Ugib je kompenzabilan, zazor nije
+
+- **Ugib** je deterministicka funkcija poze i tereta. Firmware je nas, pa se
+  moze **racunati i kompenzovati u softveru** — bez ijedne dodatne komponente.
+  Najisplativija mera u projektu.
+- **Zazor** menja znak sa smerom kretanja. Softver ga ne moze predvideti —
+  trazi enkoder na izlazu zgloba (3.2).
+
+---
+
 ## 4. Konstruktivne posledice
 
 ### Masa i kablovi hotenda
