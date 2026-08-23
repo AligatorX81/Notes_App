@@ -29,3 +29,6 @@ dist-ssr
 **/tempobook/storyboards/
 
 core
+
+# CAD generisani izlazi
+cad/out/
