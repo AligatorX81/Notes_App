@@ -1,0 +1,8 @@
+{
+    "autodeskProduct": "Fusion360",
+    "type": "script",
+    "author": "",
+    "description": { "": "Generise cikloidni disk sa parametrima iz skripte" },
+    "supportedOS": "windows|mac",
+    "editEnabled": true
+}
