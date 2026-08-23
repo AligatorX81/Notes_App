@@ -26,7 +26,9 @@ je gotov i radi. Ovde se projektuje mehanika koju ce ti motori pokretati.
 - **5 stepeni slobode + hvataljka = 6 motora**
 - Motori: **NEMA17 42x48 (0.59 Nm)**
 - Napajanje: **24 V**
-- Domet **600 mm**, nosivost **1 kg**
+- Domet **600 mm** od ose ramena, nosivost **1 kg**
+- Duzine: **nadlaktica 260**, **podlaktica 240**, **zglob+gripper 100**
+- Osa ramena **210 mm** iznad poda, baza **220 x 180 x 130**
 - Materijal: **ASA** (zbog hotenda)
 - Dva rezima: hvatanje/premestanje (pun domet) i **stampa (200–350 mm zona)**
 
@@ -38,7 +40,8 @@ python3 cad/cycloidal_disc.py shoulder   # 50:1, Ø137 mm
 python3 cad/cycloidal_disc.py elbow      # 25:1, Ø89 mm
 python3 cad/torque_calc.py               # momenti po zglobovima
 python3 cad/max_duzine.py                # granice duzina segmenata
-python3 cad/arm_massing.py               # maketa cele ruke
+python3 cad/arm_massing.py               # maketa cele ruke (STEP + SVG)
+python3 cad/crtez_mere.py                # kotirani crtez (PNG)
 ```
 
 Izlaz u `cad/out/` kao STEP (za FreeCAD) i STL (za stampu).
