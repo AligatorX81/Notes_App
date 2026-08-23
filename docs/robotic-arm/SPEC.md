@@ -197,6 +197,20 @@ imao upotrebljivu brzinu, a moment koracnog motora naglo opada sa obrtajima.
 Jedini lek je visi napon, i tu TMC5160 (60V) ima znacajnu prednost nad
 TMC2240 (36V).
 
+### ODLUCENO: sistem radi na 24 V
+
+Bez druge sine i bez 48 V. Posledica po izbor drajvera je u sekciji nize.
+
+**Sta TMC5160T Pro daje na 24 V:** ne napon, nego **struju**. Eksterni MOSFET-i
+dozvoljavaju znatno vise od TMC2240 (~2.1 A RMS). Ta struja je upotrebljiva samo
+ako je motor moze primiti — NEMA17 je nominalno 1.5–2.0 A. Dakle **5160T Pro na
+24 V otkljucava NEMA23** na ramenu i laktu, i to mu je jedina prava vrednost u
+ovom setupu.
+
+**Ta rezerva se NE trosi na produzenje ruke.** Duza ruka ne daje veci moment
+nego ga trosi — krak mnozi opterecenje, pa produzenje smanjuje nosivost i
+linearno pogorsava tacnost u rezimu stampe (`3D-STAMPA-REZIM.md`).
+
 ### Naponske sine — kriticno
 
 Maksimalni naponi napajanja:

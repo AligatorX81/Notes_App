@@ -116,23 +116,22 @@ M3**. Na M4 i M5 se ne isplati.
 
 ---
 
-## 5. Firmware — otvoreno pitanje
+## 5. Firmware
 
-**Klipper nema kinematiku za petoosnu zglobnu ruku.** Podrzava cartesian,
-corexy, delta, rotary_delta, polar, winch — ne i serijsku ruku.
+**Na plocu je vec napisan i flesovan sopstveni bare metal firmware i radi.**
+Kinematika je time nasa odluka, ne ogranicenje gotovog alata.
 
-Dve opcije:
+(Ranija napomena da Klipper ne podrzava petoosnu zglobnu ruku ovde ne vazi —
+Klipper se i ne koristi.)
 
-1. **Sopstveni kinematicki modul u Klipperu** — C + Python, veci posao, ali daje
-   pravu real-time kontrolu.
-2. **Offline pretvaranje G-koda u uglove zglobova** — putanje su unapred poznate,
-   pa se inverzna kinematika moze uraditi pre stampe i ruci poslati vec
-   izracunati uglovi. Izvodljivije.
+Ostaje da se odluci gde se racuna inverzna kinematika:
 
-Odluka nije hitna, ali utice na to da li su enkoderi u zatvorenoj petlji ili
-samo za kalibraciju.
+1. **U firmware-u, u realnom vremenu** — potpuna kontrola, veci posao na MCU-u
+2. **Offline, pre stampe** — putanje su unapred poznate, pa se G-kod moze
+   pretvoriti u uglove zglobova i firmware-u slati vec izracunato
 
----
+Izbor utice na to da li su enkoderi (3.2) u zatvorenoj petlji ili sluze samo za
+kalibraciju i proveru.
 
 ## 6. Realno ocekivanje
 
