@@ -31,27 +31,76 @@ Konfiguracija: **6 motora, 2 cikloidna reduktora** (rame i lakat).
 | M2 | pitch | **rame / elevacija** | **da** | — |
 | M3 | pitch | **lakat / elevacija** | **da** | — |
 | M4 | — | zglob šake | ne | vidi napomenu ispod |
-| M5 | roll | rotacija grippera | ne | direktan ili mali remen |
+| M5 | roll (predlog: pitch) | orijentacija grippera | ne | puzni prenos ako postane pitch |
 | M6 | linearni/prstasti | gripper otvaranje/zatvaranje | ne | aktuator, nije zglob |
 
 Rame i lakat nose gotovo sav moment u sistemu, pa oni dobijaju cikloidni. Sve
 ostalo ostaje lagano — što je samo po sebi dobitak, jer svaki gram na kraju ruke
 direktno povecava opterecenje M2 i M3.
 
-### Napomena: M4 (zglob sake)
-Ako je M4 **pitch** osa, ona i dalje radi protiv gravitacije — nosi gripper i
-teret, samo na kratkom kraku. Bez cikloidnog joj treba ili samokocivi prenos
-(puz/worm) ili dovoljan odnos da drzi pozu bez backdrivinga. Opcije po
-prioritetu:
+### Napomena: M4 i M5
 
-1. **Puzni prenos (worm)** — samokocivi, drzi bez struje, jeftin. Mana: trenje
-   i nizak stepen korisnosti, ali na ovoj osi to nije bitno.
-2. **Planetarni reduktor na NEMA17**, ~20–30:1 — kompaktan, dostupan gotov.
-3. **Zupcasti remen** ~5:1 — najlaksi, ali sam po sebi verovatno nedovoljan da
-   drzi teret bez drzanja struje na motoru.
+M4 je **roll** (uvrtanje podlaktice) — gravitacija ga ne opterecuje, dovoljan je
+remen. Vidi sekciju 2a: kako je opisano, M4 i M5 dele istu osu, sto je otvoreno
+pitanje.
 
-Ako je M4 **roll** osa (rotacija podlaktice), gravitacija je nije briga i
-dovoljan je remen. **Potvrditi tip ose M4.**
+Ako M5 postane pitch (predlog u 2a), nosi samo gripper na kratkom kraku. Bez
+cikloidnog, ali mu treba prenos koji drzi pozu:
+
+1. **Puzni prenos (worm)** — samokociv, drzi bez struje, jeftin. Prvi izbor.
+2. **Planetarni reduktor na NEMA17**, ~20–30:1 — gotov, kompaktan.
+3. **Zupcasti remen** ~5:1 — najlaksi, ali verovatno nedovoljan da drzi teret
+   bez stalnog drzanja struje na motoru.
+
+## 2a. Segmentacija projekta
+
+Ruka se razvija kao pet zasebnih modula. Svaki je zaseban CAD sklop i moze se
+projektovati i stampati nezavisno.
+
+| # | Modul | Sadrzaj | Motori |
+|---|-------|---------|--------|
+| 1 | **Baza / podnozje** | kuciste, BTT Octopus Pro, napajanje, motor rotacije. Osovina motora viri iznad baze i nosi celu ruku. | M1 |
+| 2 | **Koren ruke** | motor elevacije, montiran uz osovinu iz baze; elevira celu ruku | M2 |
+| 3 | **Nadlaktica** | od elevacionog motora do zgloba; na zglobu **dva motora** — elevacija i rotacija sledeceg segmenta | M3, M4 |
+| 4 | **Zglob pred gripperom** | orijentacija grippera | M5 |
+| 5 | **Gripper** | pogon hvatanja | M6 |
+
+### Kinematicki lanac
+
+```
+BAZA -[M1 yaw]- RAME -[M2 pitch]- NADLAKTICA -[M3 pitch]-+-[M4 roll]- PODLAKTICA -[M5]- GRIPPER -[M6]
+                                                          |
+                                                     isti zglob
+```
+
+### OTVORENO: M4 i M5 su, kako je opisano, ista osa
+
+Ako je podlaktica prava, M4 (uvrtanje podlaktice) i M5 (rotacija grippera)
+rotiraju oko **iste uzduzne ose**. To je jedan stepen slobode izveden dvaput —
+jedan motor ne doprinosi nista novo.
+
+Efektivno: **4 stepena slobode**, ne 5.
+
+Posledica: u vertikalnoj ravni postoje samo dva zgloba (M2, M3). Dva zgloba daju
+dva stepena slobode — dovoljno da se **dodje do tacke** (domet + visina), ali ne
+i da se bira **ugao pod kojim gripper prilazi**. Nagib grippera je posledica
+pozicije, a ne izbor.
+
+**Predlog: M5 postaje pitch umesto roll.** Neka savija gripper gore-dole umesto
+da ga uvrce. Tri pitch zgloba u vertikalnoj ravni daju polozaj **i** ugao
+prilaza. M4 tada ostaje roll i prestaje da bude suvisan.
+
+M5 kao pitch jeste elevacioni zglob, ali nosi samo gripper na kratkom kraku —
+**i dalje bez cikloidnog**. Puzni prenos je dovoljan i uz to samokociv, pa
+gripper ne pada kad se iskljuci struja.
+
+**Alternativa:** zadrzati raspored i izbaciti M4 ili M5, posto rade isti posao.
+Ustedi se motor, drajver i masa na kraju ruke.
+
+### Napomena o masi na zglobu (modul 3)
+Dva motora na istom zglobu su koncentrisana masa na sredini ruke i direktno
+opterecuju M2. Ako se pokaze kao problem, motor za roll se moze pomeriti blize
+korenu i pogon preneti remenom.
 
 ## 3. Orijentacione vrednosti prenosa (cikloidni)
 
@@ -157,7 +206,7 @@ Vazi za oba stepena (M2 i M3):
 
 ## 7. Sledeći koraci
 
-1. Potvrditi tip ose M4 (pitch ili roll)
+1. Odluciti o M4/M5 redundanciji (vidi 2a) — M5 kao pitch ili izbaciti jedan motor
 2. Popuniti sekciju 6 na osnovu referentnog videa
 3. ~~Odabrati alat za modelovanje~~ — odluceno: CadQuery + FreeCAD 1.0 (vidi `cad/README.md`)
 4. Proračun momenata po zglobu → konačni prenosni odnosi i izbor motora
