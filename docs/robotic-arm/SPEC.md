@@ -23,39 +23,49 @@ mali planetarni.
 
 ## 2. Raspored zglobova
 
-Pravilo "svaki drugi motor" važi približno, ali kod klasične 6-osne kinematike
-postoje **dva pitch zgloba zaredom** (rame i lakat):
+Konfiguracija: **6 motora, 2 cikloidna reduktora** (rame i lakat).
 
-| Zglob | Tip ose | Funkcija | Cikloidni? | Napomena |
-|-------|---------|----------|-----------|----------|
-| J1 | yaw (vertikalna) | rotacija baze | ne | nosi inerciju cele ruke, ali ne gravitaciju |
-| J2 | pitch | rame / elevacija | **da** | najveći moment u sistemu |
-| J3 | pitch | lakat / elevacija | **da** | drugi po momentu |
-| J4 | roll | rotacija podlaktice | ne | remen ili planetarni |
-| J5 | pitch | zglob šake / elevacija | **da** | najmanji od tri cikloidna |
-| J6 | roll | rotacija alata | ne | direktan ili mali remen |
+| Motor | Tip ose | Funkcija | Cikloidni? | Prenos ako nema cikloidnog |
+|-------|---------|----------|-----------|----------------------------|
+| M1 | yaw (vertikalna) | rotacija baze | ne | remen ili planetarni, ~4:1 |
+| M2 | pitch | **rame / elevacija** | **da** | — |
+| M3 | pitch | **lakat / elevacija** | **da** | — |
+| M4 | — | zglob šake | ne | vidi napomenu ispod |
+| M5 | roll | rotacija grippera | ne | direktan ili mali remen |
+| M6 | linearni/prstasti | gripper otvaranje/zatvaranje | ne | aktuator, nije zglob |
 
-→ 3 cikloidna reduktora, 3 jednostavna prenosa.
+Rame i lakat nose gotovo sav moment u sistemu, pa oni dobijaju cikloidni. Sve
+ostalo ostaje lagano — što je samo po sebi dobitak, jer svaki gram na kraju ruke
+direktno povecava opterecenje M2 i M3.
 
-**Otvoreno pitanje:** ako referentna ruka ima drugačiju kinematiku (npr. J2 i J3
-razdvojeni rotacionom osom), raspored se menja i tada "svaki drugi motor"
-važi doslovno. Potvrditi prema videu.
+### Napomena: M4 (zglob sake)
+Ako je M4 **pitch** osa, ona i dalje radi protiv gravitacije — nosi gripper i
+teret, samo na kratkom kraku. Bez cikloidnog joj treba ili samokocivi prenos
+(puz/worm) ili dovoljan odnos da drzi pozu bez backdrivinga. Opcije po
+prioritetu:
 
-## 3. Orijentacione vrednosti prenosa
+1. **Puzni prenos (worm)** — samokocivi, drzi bez struje, jeftin. Mana: trenje
+   i nizak stepen korisnosti, ali na ovoj osi to nije bitno.
+2. **Planetarni reduktor na NEMA17**, ~20–30:1 — kompaktan, dostupan gotov.
+3. **Zupcasti remen** ~5:1 — najlaksi, ali sam po sebi verovatno nedovoljan da
+   drzi teret bez drzanja struje na motoru.
 
-Moment opada kako se ide ka alatu, pa ne moraju svi cikloidni biti isti:
+Ako je M4 **roll** osa (rotacija podlaktice), gravitacija je nije briga i
+dovoljan je remen. **Potvrditi tip ose M4.**
+
+## 3. Orijentacione vrednosti prenosa (cikloidni)
 
 | Zglob | Predlog odnosa | Razlog |
 |-------|----------------|--------|
-| J2 | ~35–40:1 | nosi celu ruku + teret na punom kraku |
-| J3 | ~25–30:1 | nosi podlakticu + teret |
-| J5 | ~20:1 | nosi samo alat/teret |
+| M2 (rame) | ~35–40:1 | nosi celu ruku + teret na punom kraku |
+| M3 (lakat) | ~25–30:1 | nosi podlakticu, saku, gripper + teret |
 
-Odnos cikloidnog: `i = Zp / (Zp - Zd)`, gde je `Zp` broj pinova prstena, a `Zd`
-broj zuba diska (obično `Zd = Zp - 1`, pa je `i = Zp - 1`... zavisno od toga da
-li je izlaz disk ili prsten). Fiksira se pri proračunu profila.
+Konacne vrednosti se fiksiraju tek posle proracuna momenata (korak 3 u sekciji 6),
+kada budu poznati domet i nosivost.
 
 ## 4. Konstruktivne odluke za cikloidne stepene
+
+Vazi za oba stepena (M2 i M3):
 
 - **Dupli disk pomeren 180°** — obavezno, zbog balansiranja ekscentra i vibracija
 - **Čelični pinovi + igličasti/kuglični ležajevi** na pinovima prstena i na
