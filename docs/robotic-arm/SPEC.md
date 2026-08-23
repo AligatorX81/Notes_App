@@ -60,10 +60,59 @@ dovoljan je remen. **Potvrditi tip ose M4.**
 | M2 (rame) | ~35–40:1 | nosi celu ruku + teret na punom kraku |
 | M3 (lakat) | ~25–30:1 | nosi podlakticu, saku, gripper + teret |
 
-Konacne vrednosti se fiksiraju tek posle proracuna momenata (korak 3 u sekciji 6),
+Konacne vrednosti se fiksiraju tek posle proracuna momenata (korak 4 u sekciji 7),
 kada budu poznati domet i nosivost.
 
-## 4. Konstruktivne odluke za cikloidne stepene
+## 4. Elektronika — drajveri koracnih motora
+
+### Raspodela (predlog)
+
+| Motor | Osa | Drajver | Bus | Obrazlozenje |
+|-------|-----|---------|-----|--------------|
+| M1 | baza, yaw | TMC2240 | SPI | ubrzava inerciju cele ruke pri malom odnosu |
+| M2 | **rame (cikloidni)** | **TMC5160T Pro** | SPI | najveci motor, treba naponska rezerva |
+| M3 | **lakat (cikloidni)** | **TMC5160T Pro** | SPI | drugi po velicini |
+| M4 | zglob sake | TMC2240 | SPI | mali prenosni odnos → trazi moment |
+| M5 | rotacija grippera | TMC2226 | UART | roll osa, bez gravitacionog opterecenja |
+| M6 | gripper | TMC2226 | UART | aktuator, mala snaga |
+
+### Zasto veliki drajveri idu na cikloidne ose
+
+Nije zbog statickog momenta — cikloidni reduktor od 25–40:1 sam rasterecuje motor.
+Razlog je **brzina**: pri visokom odnosu motor mora da se vrti brzo da bi zglob
+imao upotrebljivu brzinu, a moment koracnog motora naglo opada sa obrtajima.
+Jedini lek je visi napon, i tu TMC5160 (60V) ima znacajnu prednost nad
+TMC2240 (36V).
+
+### Naponske sine — kriticno
+
+Maksimalni naponi napajanja:
+
+| Drajver | Max V | Struja (orijentaciono) |
+|---------|-------|------------------------|
+| TMC2226 | 29 V | ~2.0 A RMS |
+| TMC2240 | 36 V | ~2.1 A RMS |
+| TMC5160T Pro | 60 V | vise A, eksterni MOSFET-i |
+
+Ako se ide na 48V za M2/M3 (a to je jedini razlog da se uopste uzme 5160),
+**TMC2226 to ne izdrzava.** Potrebna je dupla sina:
+
+- **48 V** → M2, M3 (TMC5160T Pro)
+- **24 V** → ostali (buck konverter sa 48V ili zasebno napajanje)
+
+Ako sve ostane na 24V, TMC5160T Pro ne donosi znacajnu prednost nad TMC2240.
+
+### Napomene
+- Kontroler mora imati **i SPI i UART** — 2240/5160 su SPI, 2226 je UART.
+- **TMC5169 ne postoji** kao proizvod (Trinamic/ADI ima 5130, 5160, 5161, 5240,
+  5271). Pretpostavka je da se misli na TMC5160T Pro — potvrditi.
+- StallGuard (dostupan na 2240 i 5160) omogucava homing bez krajnjih prekidaca
+  na cikloidnim osama.
+- Otvoreno: da li ici na zatvorenu petlju sa enkoderima na izlazu zgloba.
+  Pri visokom cikloidnom odnosu izgubljen korak motora je mali u prostoru
+  zgloba, pa je otvorena petlja podnosljiva za pocetak.
+
+## 5. Konstruktivne odluke za cikloidne stepene
 
 Vazi za oba stepena (M2 i M3):
 
@@ -74,9 +123,9 @@ Vazi za oba stepena (M2 i M3):
 - Zazor (offset cikloidnog profila) — parametar koji se štimuje po toleranciji
   proizvodnje, tipično 0.05–0.15 mm za štampu
 
-## 5. Referentni dizajn
+## 6. Referentni dizajn
 
-*(popuniti — broj osa, domet, nosivost, tip motora, materijal, izvor inspiracije)*
+*(popuniti — domet, nosivost, tip i velicina motora, materijal, izvor inspiracije)*
 
 - Broj osa:
 - Domet:
@@ -85,9 +134,10 @@ Vazi za oba stepena (M2 i M3):
 - Materijal kućišta:
 - Poznat open-source projekat kao osnova (AR4 / Thor / Moveo / Annin / drugo):
 
-## 6. Sledeći koraci
+## 7. Sledeći koraci
 
-1. Popuniti sekciju 5 na osnovu referentnog videa
-2. Odabrati alat za modelovanje (parametarski kod: CadQuery/OpenSCAD, ili ručni CAD)
-3. Proračun momenata po zglobu → konačni prenosni odnosi i izbor motora
-4. Generisanje cikloidnog profila za J2, J3, J5
+1. Potvrditi tip ose M4 (pitch ili roll) i oznaku velikog drajvera (TMC5160T Pro?)
+2. Popuniti sekciju 6 na osnovu referentnog videa
+3. Odabrati alat za modelovanje (parametarski kod: CadQuery/OpenSCAD, ili ručni CAD)
+4. Proračun momenata po zglobu → konačni prenosni odnosi i izbor motora
+5. Generisanje cikloidnog profila za M2 i M3
