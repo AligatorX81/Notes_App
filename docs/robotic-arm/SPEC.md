@@ -95,12 +95,35 @@ Maksimalni naponi napajanja:
 | TMC5160T Pro | 60 V | vise A, eksterni MOSFET-i |
 
 Ako se ide na 48V za M2/M3 (a to je jedini razlog da se uopste uzme 5160),
-**TMC2226 to ne izdrzava.** Potrebna je dupla sina:
+**TMC2226 to ne izdrzava** — 29V mu je granica. Potrebne su dve sine:
 
 - **48 V** → M2, M3 (TMC5160T Pro)
-- **24 V** → ostali (buck konverter sa 48V ili zasebno napajanje)
+- **24 V** → ostali
 
-Ako sve ostane na 24V, TMC5160T Pro ne donosi znacajnu prednost nad TMC2240.
+### Resenje preko BTT Octopus Pro v1.1
+
+Octopus Pro resava ovo bez zasebnog napajanja i bez buck konvertera:
+
+- `MOTOR_POWER` port prima do **60 V**, `Main Power` do 28 V
+- **svaki od 8 slotova bira napon nezavisno, preko jumpera**
+
+Raspored jumpera:
+
+| Slot | Drajver | Sina |
+|------|---------|------|
+| M2 rame | TMC5160T Pro | `MOTOR_POWER` 48 V |
+| M3 lakat | TMC5160T Pro | `MOTOR_POWER` 48 V |
+| M1, M4 | TMC2240 | `Main Power` 24 V |
+| M5, M6 | TMC2226 | `Main Power` 24 V |
+
+Osam slotova pokriva svih sest motora, uz dva u rezervi.
+
+**Proveriti fizicki:** TMC5160T Pro je krupan modul sa hladnjakom i ventilatorom —
+potvrditi da dva takva ne blokiraju susedne slotove.
+
+**Kamera:** Octopus Pro nema CSI/MIPI konektor niti bilo kakav interfejs za
+kameru. To je iskljucivo motion-control ploca. Kamera ide na host SBC
+(Raspberry Pi), preko USB-a ili CSI-ja na samom Pi-ju.
 
 ### Napomene
 - Kontroler mora imati **i SPI i UART** — 2240/5160 su SPI, 2226 je UART.

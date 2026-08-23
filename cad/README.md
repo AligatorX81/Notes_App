@@ -134,3 +134,24 @@ CadQuery skripta je pokrenuta i provera je prosla. **Fusion skripta nije
 testirana** — Fusion API radi samo unutar pokrenutog Fusiona na Windows/macOS,
 pa je ovde nije bilo moguce izvrsiti. Proverena je samo sintaksa. Ako pukne pri
 pokretanju, posalji tekst greske iz message box-a.
+
+## Fusion na Linuxu (Pop!_OS)
+
+Autodesk nema nativnu Linux verziju Fusiona. Opcije:
+
+1. **cryinkfly instaler** (Wine) — podrzava Pop!_OS 20.04 / 22.04 / 24.04:
+   https://codeberg.org/cryinkfly/Autodesk-Fusion-360-on-Linux
+   Trazi wine 6.23+, winetricks, yad.
+2. **Windows VM** — stabilnije, ali bez GPU passthrough-a je spor.
+3. **Dual boot** — najpouzdanije.
+
+### Posledica za ovaj projekat
+
+Na Pop!_OS-u je **nacin A (STEP) pouzdaniji od nacina B**, suprotno od onoga
+sto vazi na Windowsu. CadQuery je nativan na Linuxu i moze se pokrenuti i
+proveriti automatski; Fusion pod Wine-om je sloj vise u kojem nista nije
+provereno, a nativna Fusion skripta je ionako netestirana.
+
+**Alternativa vredna razmatranja:** FreeCAD je nativan na Linuxu, otvara STEP
+sa punim parametarskim editovanjem i ima CadQuery integraciju (Workbench).
+Ako Fusion nije obavezan, otpada cela Wine prica.
