@@ -31,7 +31,7 @@ Konfiguracija: **6 motora, 2 cikloidna reduktora** (rame i lakat).
 | M2 | pitch | **rame / elevacija** | **da** | — |
 | M3 | pitch | **lakat / elevacija** | **da** | — |
 | M4 | — | zglob šake | ne | vidi napomenu ispod |
-| M5 | roll (predlog: pitch) | orijentacija grippera | ne | puzni prenos ako postane pitch |
+| M5 | **pitch** | savijanje grippera, ugao prilaza | ne | **puzni prenos** (samokociv) |
 | M6 | linearni/prstasti | gripper otvaranje/zatvaranje | ne | aktuator, nije zglob |
 
 Rame i lakat nose gotovo sav moment u sistemu, pa oni dobijaju cikloidni. Sve
@@ -40,17 +40,15 @@ direktno povecava opterecenje M2 i M3.
 
 ### Napomena: M4 i M5
 
-M4 je **roll** (uvrtanje podlaktice) — gravitacija ga ne opterecuje, dovoljan je
-remen. Vidi sekciju 2a: kako je opisano, M4 i M5 dele istu osu, sto je otvoreno
-pitanje.
+- **M4 = roll** (uvrtanje podlaktice). Gravitacija ga ne opterecuje — dovoljan
+  je zupcasti remen.
+- **M5 = pitch** (savijanje grippera). Elevacioni je, ali nosi samo gripper na
+  kratkom kraku, pa ide bez cikloidnog. Pogon: **puzni prenos**, prvenstveno
+  zato sto je samokociv i drzi pozu bez struje. Alternative ako puz ne odgovara:
+  planetarni ~20–30:1, ili remen ~5:1 (ovaj poslednji verovatno nedovoljan da
+  drzi teret bez stalnog drzanja struje).
 
-Ako M5 postane pitch (predlog u 2a), nosi samo gripper na kratkom kraku. Bez
-cikloidnog, ali mu treba prenos koji drzi pozu:
-
-1. **Puzni prenos (worm)** — samokociv, drzi bez struje, jeftin. Prvi izbor.
-2. **Planetarni reduktor na NEMA17**, ~20–30:1 — gotov, kompaktan.
-3. **Zupcasti remen** ~5:1 — najlaksi, ali verovatno nedovoljan da drzi teret
-   bez stalnog drzanja struje na motoru.
+Vidi sekciju 2a za obrazlozenje zasto M5 nije roll.
 
 ## 2a. Segmentacija projekta
 
@@ -62,7 +60,7 @@ projektovati i stampati nezavisno.
 | 1 | **Baza / podnozje** | kuciste, BTT Octopus Pro, napajanje, motor rotacije. Osovina motora viri iznad baze i nosi celu ruku. | M1 |
 | 2 | **Koren ruke** | motor elevacije, montiran uz osovinu iz baze; elevira celu ruku | M2 |
 | 3 | **Nadlaktica** | od elevacionog motora do zgloba; na zglobu **dva motora** — elevacija i rotacija sledeceg segmenta | M3, M4 |
-| 4 | **Zglob pred gripperom** | orijentacija grippera | M5 |
+| 4 | **Zglob pred gripperom** | savijanje grippera (pitch, puzni prenos) | M5 |
 | 5 | **Gripper** | pogon hvatanja | M6 |
 
 ### Kinematicki lanac
@@ -73,29 +71,36 @@ BAZA -[M1 yaw]- RAME -[M2 pitch]- NADLAKTICA -[M3 pitch]-+-[M4 roll]- PODLAKTICA
                                                      isti zglob
 ```
 
-### OTVORENO: M4 i M5 su, kako je opisano, ista osa
+### ODLUCENO: M5 je pitch, ne roll
 
-Ako je podlaktica prava, M4 (uvrtanje podlaktice) i M5 (rotacija grippera)
-rotiraju oko **iste uzduzne ose**. To je jedan stepen slobode izveden dvaput —
-jedan motor ne doprinosi nista novo.
+Prvobitni opis je M4 (uvrtanje podlaktice) i M5 (rotacija grippera) stavljao
+oko **iste uzduzne ose** — jedan stepen slobode izveden dvaput. Efektivno bi to
+bila ruka sa 4 stepena slobode, kod koje se moze doci do tacke, ali se ne moze
+birati ugao pod kojim gripper prilazi.
 
-Efektivno: **4 stepena slobode**, ne 5.
+**M5 je zato pitch: savija gripper gore-dole umesto da ga uvrce.**
 
-Posledica: u vertikalnoj ravni postoje samo dva zgloba (M2, M3). Dva zgloba daju
-dva stepena slobode — dovoljno da se **dodje do tacke** (domet + visina), ali ne
-i da se bira **ugao pod kojim gripper prilazi**. Nagib grippera je posledica
-pozicije, a ne izbor.
+Time M4 ostaje roll i prestaje da bude suvisan, a ruka ima punih **5 stepeni
+slobode**:
 
-**Predlog: M5 postaje pitch umesto roll.** Neka savija gripper gore-dole umesto
-da ga uvrce. Tri pitch zgloba u vertikalnoj ravni daju polozaj **i** ugao
-prilaza. M4 tada ostaje roll i prestaje da bude suvisan.
+| | Osa | Doprinos |
+|---|-----|----------|
+| M1 | yaw | zakret cele ruke |
+| M2 | pitch | polozaj u vertikalnoj ravni |
+| M3 | pitch | polozaj u vertikalnoj ravni |
+| M4 | roll | ravan u kojoj M5 savija |
+| M5 | pitch | ugao prilaza grippera |
 
-M5 kao pitch jeste elevacioni zglob, ali nosi samo gripper na kratkom kraku —
-**i dalje bez cikloidnog**. Puzni prenos je dovoljan i uz to samokociv, pa
-gripper ne pada kad se iskljuci struja.
+Sto daje: **pun polozaj (3) + pravac prilaza (2)**.
 
-**Alternativa:** zadrzati raspored i izbaciti M4 ili M5, posto rade isti posao.
-Ustedi se motor, drajver i masa na kraju ruke.
+Sto ne daje: nezavisan zaokret alata oko sopstvene ose kada je prilaz vec
+fiksiran — to trazi sesti zglob. Za hvatanje i premestanje je 5 osa sasvim
+dovoljno; ogranicenje se oseti tek kod zadataka koji traze proizvoljnu
+orijentaciju alata.
+
+**Pogon M5:** puzni prenos. Nosi samo gripper na kratkom kraku, pa cikloidni
+nije potreban — a puz je samokociv, sto znaci da gripper ne pada kad se
+iskljuci struja.
 
 ### Napomena o masi na zglobu (modul 3)
 Dva motora na istom zglobu su koncentrisana masa na sredini ruke i direktno
@@ -109,7 +114,7 @@ korenu i pogon preneti remenom.
 | M2 (rame) | ~35–40:1 | nosi celu ruku + teret na punom kraku |
 | M3 (lakat) | ~25–30:1 | nosi podlakticu, saku, gripper + teret |
 
-Konacne vrednosti se fiksiraju tek posle proracuna momenata (korak 4 u sekciji 7),
+Konacne vrednosti se fiksiraju tek posle proracuna momenata (korak 3 u sekciji 7),
 kada budu poznati domet i nosivost.
 
 ## 4. Elektronika — drajveri koracnih motora
@@ -206,8 +211,7 @@ Vazi za oba stepena (M2 i M3):
 
 ## 7. Sledeći koraci
 
-1. Odluciti o M4/M5 redundanciji (vidi 2a) — M5 kao pitch ili izbaciti jedan motor
-2. Popuniti sekciju 6 na osnovu referentnog videa
-3. ~~Odabrati alat za modelovanje~~ — odluceno: CadQuery + FreeCAD 1.0 (vidi `cad/README.md`)
-4. Proračun momenata po zglobu → konačni prenosni odnosi i izbor motora
-5. Generisanje cikloidnog profila za M2 i M3
+1. Popuniti sekciju 6 na osnovu referentnog videa
+2. ~~Odabrati alat za modelovanje~~ — odluceno: CadQuery + FreeCAD 1.0 (vidi `cad/README.md`)
+3. Proračun momenata po zglobu → konačni prenosni odnosi i izbor motora
+4. Generisanje cikloidnog profila za M2 i M3

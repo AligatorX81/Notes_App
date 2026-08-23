@@ -43,7 +43,8 @@ sa njihovim stvarnim merama, a ne kao ljuska u koju ce se nesto kasnije ugurati.
 - prolaz kroz osu M4 (roll) — vidi "Kablovi kroz rotacione zglobove"
 
 ### Modul 4 — Zglob pred gripperom
-- montaza M5 i njegovog prenosa (puzni, ako M5 postane pitch)
+- montaza M5 kao **pitch** ose i njegovog **puznog prenosa**
+- leziste puznog para (puz + puzno kolo), sa lezajevima na oba kraja puza
 - prihvat grippera
 
 ### Modul 5 — Gripper
