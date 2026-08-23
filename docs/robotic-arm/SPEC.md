@@ -1,7 +1,11 @@
 # Robotska ruka — specifikacija (radna verzija)
 
-> Status: rana faza. Referentni video (YouTube Shorts `b2AzL5bor0w`) nije bio dostupan
-> asistentu — vizuelni opis ruke treba dopuniti ručno u sekciji "Referentni dizajn".
+> **Status: konfiguracija potvrdjena.** Raspored osa, pogoni i segmentacija su
+> zakljuceni. Otvoreno ostaje samo *domet i nosivost*, bez kojih su dimenzije
+> u sekciji 3 procena.
+>
+> Referentni video (YouTube Shorts `b2AzL5bor0w`) nije bio dostupan asistentu —
+> vizuelni opis ruke treba dopuniti rucno u sekciji "Referentni dizajn".
 
 ## 1. Osnovni princip pogona
 
@@ -33,9 +37,9 @@ Konfiguracija: **6 motora, 5 stepeni slobode, 2 cikloidna reduktora** (rame i la
 | Motor | Tip ose | Funkcija | Cikloidni? | Prenos ako nema cikloidnog |
 |-------|---------|----------|-----------|----------------------------|
 | M1 | yaw (vertikalna) | rotacija baze | ne | remen ili planetarni, ~4:1 |
-| M2 | pitch | **rame / elevacija** | **da** | — |
+| M2 | pitch | **rame / elevacija** (opseg nesto ispod 180°) | **da** | — |
 | M3 | pitch | **lakat / elevacija** | **da** | — |
-| M4 | — | zglob šake | ne | vidi napomenu ispod |
+| M4 | roll | uvrtanje **podlaktice** (iza lakta) | ne | zupcasti remen |
 | M5 | **pitch** | savijanje grippera, ugao prilaza | ne | **puzni prenos** (samokociv) |
 | M6 | linearni/prstasti | gripper otvaranje/zatvaranje | ne | aktuator, nije zglob |
 
@@ -64,17 +68,30 @@ projektovati i stampati nezavisno.
 |---|-------|---------|--------|
 | 1 | **Baza / podnozje** | kuciste, BTT Octopus Pro, napajanje, motor rotacije. Osovina motora viri iznad baze i nosi celu ruku. | M1 |
 | 2 | **Koren ruke** | motor elevacije, montiran uz osovinu iz baze; elevira celu ruku | M2 |
-| 3 | **Nadlaktica** | od elevacionog motora do zgloba; na zglobu **dva motora** — elevacija i rotacija sledeceg segmenta | M3, M4 |
+| 3 | **Nadlaktica + podlaktica** | od M2 do lakta; na laktu **M3 sa cikloidnim** (elevira podlakticu), a **odmah iza njega, na podlaktici, M4 roll** (uvrce podlakticu) | M3, M4 |
 | 4 | **Zglob pred gripperom** | savijanje grippera (pitch, puzni prenos) | M5 |
 | 5 | **Gripper** | pogon hvatanja | M6 |
 
 ### Kinematicki lanac
 
 ```
-BAZA -[M1 yaw]- RAME -[M2 pitch]- NADLAKTICA -[M3 pitch]-+-[M4 roll]- PODLAKTICA -[M5]- GRIPPER -[M6]
-                                                          |
-                                                     isti zglob
+BAZA
+ └─[M1 yaw]──────── rotacija cele ruke
+     └─[M2 pitch]── CIKLOIDNI ~35:1   elevacija cele ruke (<180°)
+         │
+      NADLAKTICA
+         └─[M3 pitch]── CIKLOIDNI ~28:1   elevacija podlaktice   (lakat)
+             └─[M4 roll]── remen              uvrtanje podlaktice
+                 │
+              PODLAKTICA
+                 └─[M5 pitch]── PUZNI (samokociv)   ugao prilaza
+                     │
+                  GRIPPER
+                     └─[M6]── pogon prstiju
 ```
+
+**Redosled na laktu je bitan: cikloidni pitch (M3) pa tek onda roll (M4).**
+Vidi "ODLUCENO: roll ide iza lakta" nize.
 
 ### ODLUCENO: M5 je pitch, ne roll
 
@@ -100,6 +117,31 @@ Sto daje: **pun polozaj (3) + pravac prilaza (2)**.
 
 Sto ne daje: nezavisan zaokret alata oko sopstvene ose kada je prilaz vec
 fiksiran — to trazi sesti zglob.
+
+### ODLUCENO: roll ide IZA lakta, ne ispred
+
+Prvobitni opis je stavljao roll **iznad** lakta — izmedju ramena i lakta. Odbaceno.
+
+Roll osa tada ide uzduz nadlaktice, a teziste svega iza nje (laktni motor,
+cikloidni reduktor M3, podlaktica, zglob, gripper) **nije na toj osi**. Kad je
+nadlaktica vodoravna a lakat savijen, gravitacija pravi moment koji roll motor
+mora da drzi:
+
+| Varijanta | Sta roll nosi | Moment |
+|-----------|---------------|--------|
+| roll **iznad** lakta | lakat + cikloidni M3 + podlaktica + gripper | ~2.1 Nm |
+| roll **iza** lakta (usvojeno) | zglob M5 + gripper | ~0.2 Nm |
+
+Deset puta razlika. Laktni sklop sam — cikloidni reduktor plus motor — tezi oko
+**830 g**, uglavnom celik (36 pinova, lezajevi, ekscentar). Roll iznad lakta bi
+morao da nosi i vrti tu masu na kraku, cime bi postao treci po opterecenju u
+ruci i trazio jak prenos — upravo ona slozenost koju osnovno pravilo (sekcija 1)
+izbegava.
+
+Sa rollom iza lakta, on nosi samo gripper i remen mu je zaista dovoljan.
+
+Ovo je uz to i redosled koji koriste industrijski sestoosni roboti:
+yaw, pitch, pitch, **roll**, pitch.
 
 ### ODLUCENO: ostaje 5 osa
 

@@ -35,12 +35,15 @@ sa njihovim stvarnim merama, a ne kao ljuska u koju ce se nesto kasnije ugurati.
   leziste ekscentricne osovine, izlazni cepovi
 - prolaz kablova ka nadlaktici
 
-### Modul 3 — Nadlaktica
+### Modul 3 — Nadlaktica + podlaktica
 - prihvat na izlaz cikloidnog reduktora M2
-- na zglobu: montaza **dva motora** (M3 elevacija, M4 rotacija)
-- kuciste cikloidnog reduktora M3
-- kanal za kablove duz segmenta
+- na laktu: montaza **M3** i kuciste njegovog cikloidnog reduktora
+- **odmah iza lakta, na podlaktici: montaza M4 (roll)** sa remenicom
+- kanal za kablove duz oba segmenta
 - prolaz kroz osu M4 (roll) — vidi "Kablovi kroz rotacione zglobove"
+
+Redosled je bitan: cikloidni pitch (M3) pa tek onda roll (M4). Obrnuto bi
+opteretilo roll motor ~10x jace — vidi `SPEC.md`, sekcija 2a.
 
 ### Modul 4 — Zglob pred gripperom
 - montaza M5 kao **pitch** ose i njegovog **puznog prenosa**
