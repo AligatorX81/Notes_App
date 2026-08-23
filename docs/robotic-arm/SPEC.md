@@ -7,6 +7,10 @@
 > Referentni video (YouTube Shorts `b2AzL5bor0w`) nije bio dostupan asistentu —
 > vizuelni opis ruke treba dopuniti rucno u sekciji "Referentni dizajn".
 
+> **Drugi rezim rada:** ruka treba da drzi hotend i stampa. To postavlja bitno
+> strozi zahtev za tacnost i menja sta je u konstrukciji kriticno —
+> vidi `3D-STAMPA-REZIM.md`.
+
 ## 1. Osnovni princip pogona
 
 **Cikloidni reduktor se ugrađuje isključivo na zglobove elevacije.**
