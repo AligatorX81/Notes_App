@@ -104,8 +104,6 @@ Ako sve ostane na 24V, TMC5160T Pro ne donosi znacajnu prednost nad TMC2240.
 
 ### Napomene
 - Kontroler mora imati **i SPI i UART** — 2240/5160 su SPI, 2226 je UART.
-- **TMC5169 ne postoji** kao proizvod (Trinamic/ADI ima 5130, 5160, 5161, 5240,
-  5271). Pretpostavka je da se misli na TMC5160T Pro — potvrditi.
 - StallGuard (dostupan na 2240 i 5160) omogucava homing bez krajnjih prekidaca
   na cikloidnim osama.
 - Otvoreno: da li ici na zatvorenu petlju sa enkoderima na izlazu zgloba.
@@ -136,7 +134,7 @@ Vazi za oba stepena (M2 i M3):
 
 ## 7. Sledeći koraci
 
-1. Potvrditi tip ose M4 (pitch ili roll) i oznaku velikog drajvera (TMC5160T Pro?)
+1. Potvrditi tip ose M4 (pitch ili roll)
 2. Popuniti sekciju 6 na osnovu referentnog videa
 3. Odabrati alat za modelovanje (parametarski kod: CadQuery/OpenSCAD, ili ručni CAD)
 4. Proračun momenata po zglobu → konačni prenosni odnosi i izbor motora
