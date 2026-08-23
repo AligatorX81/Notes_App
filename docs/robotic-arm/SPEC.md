@@ -212,6 +212,49 @@ Nosivost do 1 kg je izvodljiva bez izmene odnosa. Konacnu vrednost potvrditi.
 **Kriticno za proveru:** tacna oznaka NEMA17 motora. Razlika izmedju 42x40
 (0.45 Nm) i 42x60 (0.72 Nm) je 60% i pomera sve gornje rezerve.
 
+## 3a. Maksimalne duzine segmenata
+
+Izvedeno iz raspolozivog momenta NEMA17 (`cad/max_duzine.py`).
+Uslovi: NEMA17 **42x48 (0.59 Nm)**, teret **500 g**, rezerva **30%** za ubrzanje.
+
+| Segment | Maksimum |
+|---------|----------|
+| **Koren ruke → prvi zglob** (rame → lakat) | **310 mm** |
+| **Prvi zglob → vrh grippera** (lakat → gripper) | **470 mm** |
+
+**Duzine su spregnute** — obe opterecuju rame, pa se ne mogu obe maksimizirati:
+
+| Koren → lakat | Lakat → gripper | Ukupan domet |
+|---------------|-----------------|--------------|
+| 340 mm | 300 mm | 640 mm |
+| 315 mm | 340 mm | 655 mm |
+| 285 mm | 380 mm | 665 mm |
+| 260 mm | 420 mm | 680 mm |
+
+### Trenutni predlog (260 + 340 = 600 mm) nije na granici
+
+| Teret | Rame | Lakat |
+|-------|------|-------|
+| 500 g | 61% | 46% |
+| 750 g | 70% | 56% |
+| 1000 g | 78% | 65% |
+
+Ima prostora do ~650 mm, ali **ne ici dalje** — svaki milimetar linearno pogorsava
+tacnost u rezimu stampe (`3D-STAMPA-REZIM.md`).
+
+### KRITICNO: zavisi od tipa NEMA17
+
+| NEMA17 | L2 max | Lakat→gripper max | Domet 600 mm |
+|--------|--------|-------------------|--------------|
+| 42x40 standardni (0.45 Nm) | 208 mm | 381 mm | **PREMASENO** |
+| 42x48 jaki (0.59 Nm) | 314 mm | 471 mm | OK |
+| 42x60 dugi (0.72 Nm) | 408 mm | 550 mm | OK sa rezervom |
+
+**Ako su motori 42x40, domet od 600 mm ne prolazi ni sa 500 g.** Tada: skratiti
+na ~490 mm, ili podici odnos na ramenu sa 40:1 na ~55:1 (disk ~180 mm).
+
+Sve gornje vrednosti su privremene dok se ne potvrdi tip motora.
+
 ## 4. Elektronika — drajveri koracnih motora
 
 ### Raspodela (predlog)
