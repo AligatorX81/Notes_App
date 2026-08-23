@@ -23,7 +23,12 @@ mali planetarni.
 
 ## 2. Raspored zglobova
 
-Konfiguracija: **6 motora, 2 cikloidna reduktora** (rame i lakat).
+Konfiguracija: **6 motora, 5 stepeni slobode, 2 cikloidna reduktora** (rame i lakat).
+
+> **6 motora ≠ 6 DOF.** M6 pokrece prste hvataljke i ne menja ni polozaj ni
+> orijentaciju alata, pa ne ulazi u kinematicki lanac. Po standardnoj
+> konvenciji broje se samo zglobovi koji nose alat — dakle M1 do M5.
+> **5 osa + hvataljka = 6 motora.**
 
 | Motor | Tip ose | Funkcija | Cikloidni? | Prenos ako nema cikloidnog |
 |-------|---------|----------|-----------|----------------------------|
@@ -94,9 +99,17 @@ slobode**:
 Sto daje: **pun polozaj (3) + pravac prilaza (2)**.
 
 Sto ne daje: nezavisan zaokret alata oko sopstvene ose kada je prilaz vec
-fiksiran — to trazi sesti zglob. Za hvatanje i premestanje je 5 osa sasvim
-dovoljno; ogranicenje se oseti tek kod zadataka koji traze proizvoljnu
-orijentaciju alata.
+fiksiran — to trazi sesti zglob.
+
+### ODLUCENO: ostaje 5 osa
+
+Pun 6-DOF trazio bi **sedmi motor** — roll iza M5, na samom gripperu. Odbaceno:
+masa na samom kraju ruke direktno opterecuje M2 i M3, dakle i oba cikloidna
+reduktora koja projektujemo, a za hvatanje i premestanje se sesta osa retko
+oseti.
+
+Ako se kasnije pokaze da je potrebna, modul 4 je zaseban segment i moze se
+zameniti bez diranja ostatka ruke.
 
 **Pogon M5:** puzni prenos. Nosi samo gripper na kratkom kraku, pa cikloidni
 nije potreban — a puz je samokociv, sto znaci da gripper ne pada kad se
