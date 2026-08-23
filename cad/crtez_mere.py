@@ -12,11 +12,11 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle, Rectangle, FancyArrowPatch
 
-BAZA_X, BAZA_Z = 220.0, 130.0
-OSA_RAMENA_Z = 210.0
+BAZA_X, BAZA_Z = 200.0, 125.0
+OSA_RAMENA_Z = 205.0
 L_NAD, L_POD, L_GRIP = 260.0, 240.0, 100.0
-D_RAME, D_LAKAT, D_ZGLOB = 137.0, 89.0, 55.0
-NEMA = 42.3
+# cilindricni aktuatori: motor + cikloidni reduktor u jednom kucistu
+D_RAME, D_LAKAT, D_ZGLOB, D_ROLL = 116.0, 72.0, 58.0, 52.0
 
 LINIJA, CEV, KOTA, MOTOR = "#2b3a4a", "#4a6fa5", "#c0392b", "#8fa0ad"
 
@@ -59,10 +59,9 @@ def nacrtaj(ax, ugao_nad, ugao_pod, ugao_grip, naslov, ploca=True):
         ax.text(295, BAZA_Z-26, "ploča za štampu", ha="center", fontsize=8,
                 color="#6b7b8c")
 
-    # motori (iza svega)
-    for c, a in ((rame, ugao_nad), (lakat, ugao_pod), (zglob, ugao_grip)):
-        ax.add_patch(Rectangle((c[0]-NEMA/2, c[1]-NEMA/2), NEMA, NEMA, fc=MOTOR,
-                               ec="none", alpha=0.5, zorder=2))
+    # M4 roll — koaksijalan sa podlakticom, odmah iza lakta
+    cr = t(*lakat, 62, ugao_pod)
+    ax.add_patch(Circle(cr, D_ROLL/2, fc="#dbe3ea", ec=LINIJA, lw=1.6, zorder=4))
 
     # karbonske cevi u paru
     for od, do in ((rame, lakat), (lakat, zglob)):
@@ -84,14 +83,15 @@ def nacrtaj(ax, ugao_nad, ugao_pod, ugao_grip, naslov, ploca=True):
                 color=LINIJA, lw=4, solid_capstyle="round", zorder=4)
 
     for c, d in ((rame, D_RAME), (lakat, D_LAKAT), (zglob, D_ZGLOB)):
-        ax.add_patch(Circle(c, d/2, fc="white", ec=LINIJA, lw=2.2, zorder=5, alpha=0.95))
-        ax.add_patch(Circle(c, 5.5, fc=LINIJA, zorder=6))
+        ax.add_patch(Circle(c, d/2, fc="white", ec=LINIJA, lw=2.4, zorder=5))
+        ax.add_patch(Circle(c, d/2-9, fc="none", ec="#b9c6d1", lw=1.1, zorder=6))
+        ax.add_patch(Circle(c, 6, fc=LINIJA, zorder=6))
 
-    ax.text(rame[0], rame[1]-D_RAME/2-22, "M2   50:1   Ø137", ha="center",
-            va="center", fontsize=8.5, color=LINIJA, zorder=9,
+    ax.text(rame[0], rame[1]-D_RAME/2-26, "M2  aktuator Ø116\n50:1", ha="center",
+            va="center", fontsize=8.5, color=LINIJA, zorder=9, linespacing=1.4,
             bbox=dict(fc="white", ec="none", pad=1.5))
-    ax.text(lakat[0], lakat[1]-D_LAKAT/2-20, "M3   25:1   Ø89", ha="center",
-            va="center", fontsize=8.5, color=LINIJA, zorder=9,
+    ax.text(lakat[0], lakat[1]-D_LAKAT/2-24, "M3  aktuator Ø72\n25:1", ha="center",
+            va="center", fontsize=8.5, color=LINIJA, zorder=9, linespacing=1.4,
             bbox=dict(fc="white", ec="none", pad=1.5))
     ax.annotate("M5  puž", zglob, xytext=(zglob[0]+58, zglob[1]+58),
                 fontsize=8, color=LINIJA, zorder=7,
@@ -140,7 +140,7 @@ def main():
                  color=LINIJA, y=0.97)
     fig.text(0.5, 0.02,
              "NEMA17 42×48  ·  nosivost 1 kg  ·  ASA  ·  24 V  ·  "
-             "karbonske cevi Ø25 u paru  ·  osa ramena 210 mm iznad poda",
+             "cilindrični aktuatori (NEMA17 + cikloidni koaksijalno)  ·  karbonske cevi Ø25",
              ha="center", fontsize=9, color="#6b7b8c")
 
     os.makedirs("cad/out", exist_ok=True)

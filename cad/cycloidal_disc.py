@@ -122,17 +122,18 @@ ASA_SKUPLJANJE = 0.005
 
 # M2 rame - 50:1. Odnos podignut sa 40:1 zbog tereta od 1 kg: na 40:1 rame je
 # trosilo 78% momenta, sto je iznad granice na kojoj koracni motor gubi korake.
-# Korak pinova stisnut na 7.5 mm da disk ne naraste — na 9 mm bi bio Ø161 mm.
+# Pinovi Ø3 mm (korak 5.55) drze disk na Ø104 umesto Ø134 — sto je uslov da
+# motor i reduktor stanu u jedan cilindricni aktuator Ø116 mm.
 SHOULDER = CycloidalParams(
-    pin_circle_r=60.9,
-    pin_r=2.0,
-    eccentricity=1.0,
+    pin_circle_r=45.0,
+    pin_r=1.5,
+    eccentricity=0.70,
     pin_count=51,
     disc_thickness=8.0,
     bore_r=11.0,
     output_hole_count=6,
-    output_hole_circle_r=33.0,
-    output_pin_r=4.0,
+    output_hole_circle_r=26.0,
+    output_pin_r=3.5,
     clearance=0.08,
     shrinkage=ASA_SKUPLJANJE,
 )
@@ -140,15 +141,15 @@ SHOULDER = CycloidalParams(
 # M3 lakat - 25:1. Namerno nizi odnos nego rame: moment u laktu je svega
 # 5.8 Nm, pa visak odnosa placa masom na sredini ruke bez koristi.
 ELBOW = CycloidalParams(
-    pin_circle_r=37.2,
-    pin_r=2.0,
-    eccentricity=1.2,
+    pin_circle_r=23.0,
+    pin_r=1.5,
+    eccentricity=0.70,
     pin_count=26,
     disc_thickness=7.0,
-    bore_r=8.0,
+    bore_r=6.0,
     output_hole_count=6,
-    output_hole_circle_r=21.0,
-    output_pin_r=3.0,
+    output_hole_circle_r=13.5,
+    output_pin_r=2.5,
     clearance=0.08,
     shrinkage=ASA_SKUPLJANJE,
 )

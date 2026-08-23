@@ -17,8 +17,8 @@ je gotov i radi. Ovde se projektuje mehanika koju ce ti motori pokretati.
 | Motor | Osa | Pogon | Drajver |
 |-------|-----|-------|---------|
 | M1 | yaw — baza | remen ~4:1 | TMC2240 |
-| M2 | pitch — rame | **cikloidni 50:1**, Ø137 mm | TMC2240 |
-| M3 | pitch — lakat | **cikloidni 25:1**, Ø89 mm | TMC2240 |
+| M2 | pitch — rame | **cikloidni 50:1**, aktuator Ø116x92 | TMC2240 |
+| M3 | pitch — lakat | **cikloidni 25:1**, aktuator Ø72x92 | TMC2240 |
 | M4 | roll — podlaktica | remen | TMC2240 |
 | M5 | pitch — zglob | puzni (samokociv) | TMC2226 |
 | M6 | gripper | — | TMC2226 |
@@ -30,6 +30,7 @@ je gotov i radi. Ovde se projektuje mehanika koju ce ti motori pokretati.
 - Duzine: **nadlaktica 260**, **podlaktica 240**, **zglob+gripper 100**
 - Osa ramena **210 mm** iznad poda, baza **220 x 180 x 130**
 - Materijal: **ASA** (zbog hotenda)
+- **Cilindricni aktuatori:** motor + cikloidni koaksijalno u jednom kucistu
 - Dva rezima: hvatanje/premestanje (pun domet) i **stampa (200–350 mm zona)**
 
 ## Generisanje modela
@@ -42,6 +43,7 @@ python3 cad/torque_calc.py               # momenti po zglobovima
 python3 cad/max_duzine.py                # granice duzina segmenata
 python3 cad/arm_massing.py               # maketa cele ruke (STEP + SVG)
 python3 cad/crtez_mere.py                # kotirani crtez (PNG)
+PYTHONPATH=cad python3 cad/render_3d.py  # 3D pogledi (PNG)
 ```
 
 Izlaz u `cad/out/` kao STEP (za FreeCAD) i STL (za stampu).

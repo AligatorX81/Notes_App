@@ -166,17 +166,59 @@ Dva motora na istom zglobu su koncentrisana masa na sredini ruke i direktno
 opterecuju M2. Ako se pokaze kao problem, motor za roll se moze pomeriti blize
 korenu i pogon preneti remenom.
 
-## 3. Prenosni odnosi i dimenzije cikloidnih stepena
+## 3. Cilindricni aktuatori — arhitektura i dimenzije
 
 **POTVRDJENO:** motori **NEMA17 42x48 (0.59 Nm)**, nosivost **1 kg**, materijal
 **ASA**, domet **600 mm**.
 
-| Zglob | Odnos | Pinova | Korak | R | Ø diska | Iskoriscenje @1 kg |
-|-------|-------|--------|-------|---|---------|--------------------|
-| **M2 rame** | **50:1** | 51 | 7.5 mm | 60.9 mm | ~137 mm | **63%** |
-| **M3 lakat** | **25:1** | 26 | 9.0 mm | 37.2 mm | ~89 mm | **52%** |
+### Arhitektura: motor i reduktor kao jedan cilindar
 
-Pinovi: **Ø4 mm** celicni cilindricni zatik.
+Svaki pogonjeni zglob je **cilindricni aktuator** — NEMA17 i cikloidni reduktor
+su **koaksijalni, u jednom kucistu**. Motor ulazi sa jedne strane, izlazna
+prirubnica izlazi sa druge. Nema delova koji strce; segmenti se spajaju direktno
+na prirubnice.
+
+| Zglob | Odnos | Pinova | Ø diska | **Aktuator** | Iskoriscenje @1 kg |
+|-------|-------|--------|---------|--------------|--------------------|
+| **M2 rame** | **50:1** | 51 | 105 mm | **Ø116 x 92 mm** | **63%** |
+| **M3 lakat** | **25:1** | 26 | 61 mm | **Ø72 x 92 mm** | **52%** |
+| M4 roll | remen | — | — | Ø52 x 78 mm | — |
+| M5 zglob | puzni | — | — | Ø58 x 74 mm | — |
+
+Pinovi: **Ø3 mm** celicni cilindricni zatik, korak **5.55 mm**, ekscentricitet
+**0.70 mm** (granica R/N = 0.88 mm).
+
+### Zasto pinovi Ø3 a ne Ø4
+
+Precnik diska prati korak pinova. Sa Ø4 pinova disk ramena bi bio Ø134 mm i
+aktuator Ø146 — nesrazmerno prema motoru od 42 mm. Sa Ø3 disk pada na Ø105, a
+aktuator na Ø116.
+
+Opterecenje nije bilo ogranicenje: pri 13.8 Nm na ramenu, tangencijalna sila je
+306 N raspodeljena na ~17 aktivnih pinova, dakle **18 N po pinu**. Celicni zatik
+Ø3 to nosi bez problema; ogranicenje je ASA oko njega, ne pin.
+
+### Uzor: Sweep Dynamics "Armold"
+
+Arhitektura cilindricnog aktuatora preuzeta je kao uzor. Njihove mere za
+poredjenje:
+
+| | Armold | nasa |
+|---|--------|------|
+| domet | 475 mm | 600 mm |
+| nosivost | 750 g | 1 kg |
+| moment na ramenu | ~9.7 Nm | ~13.8 Nm |
+| odnos | 26:1 | 50:1 |
+| gabarit reduktora | 42x42 mm | Ø116 mm |
+
+**Njihov gabarit se ne moze preslikati.** Da reduktor stane u 42 mm pri 26:1,
+pinovi moraju biti ~Ø2 mm uz ekscentricitet ~0.67 mm — sto je izvan onoga sto
+FDM u ASA pouzdano daje (samo skupljanje ASA na delu od 42 mm iznosi ~0.2 mm).
+Njihovi delovi su verovatno CNC ili smola.
+
+Preuzet je **jezik oblika**, ne gabarit: koaksijalni aktuator, glatke ljuske,
+prirubnicki spojevi, bez strcecih delova — na nasim dimenzijama, koje nosi nas
+teret.
 
 ### Zasto 50:1 a ne 40:1
 
