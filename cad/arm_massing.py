@@ -20,8 +20,8 @@ L_NADLAKTICA = 260.0        # rame -> lakat
 L_PODLAKTICA = 240.0        # lakat -> zglob
 L_GRIPPER = 100.0           # zglob -> vrh
 
-D_CIKL_RAME = 132.0         # 40:1
-D_CIKL_LAKAT = 75.0         # 20:1
+D_CIKL_RAME = 137.0         # 50:1
+D_CIKL_LAKAT = 89.0         # 25:1
 W_CIKL_RAME, W_CIKL_LAKAT = 55.0, 45.0
 
 NEMA = (42.3, 42.3, 48.0)   # potvrdjeno: 42x48

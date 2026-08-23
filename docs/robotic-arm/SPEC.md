@@ -1,8 +1,8 @@
 # Robotska ruka — specifikacija (radna verzija)
 
-> **Status: konfiguracija potvrdjena.** Raspored osa, pogoni i segmentacija su
-> zakljuceni. Otvoreno ostaje samo *domet i nosivost*, bez kojih su dimenzije
-> u sekciji 3 procena.
+> **Status: konfiguracija i dimenzije potvrdjene.**
+> Motori NEMA17 42x48 · nosivost 1 kg · domet 600 mm · materijal ASA · 24 V.
+> Otvoreno: gde se racuna inverzna kinematika, i kalibracija skupljanja ASA.
 >
 > Referentni video (YouTube Shorts `b2AzL5bor0w`) nije bio dostupan asistentu —
 > vizuelni opis ruke treba dopuniti rucno u sekciji "Referentni dizajn".
@@ -41,8 +41,8 @@ Konfiguracija: **6 motora, 5 stepeni slobode, 2 cikloidna reduktora** (rame i la
 | Motor | Tip ose | Funkcija | Cikloidni? | Prenos ako nema cikloidnog |
 |-------|---------|----------|-----------|----------------------------|
 | M1 | yaw (vertikalna) | rotacija baze | ne | remen ili planetarni, ~4:1 |
-| M2 | pitch | **rame / elevacija** (opseg nesto ispod 180°) | **da 40:1** | — |
-| M3 | pitch | **lakat / elevacija** | **da 20:1** | — |
+| M2 | pitch | **rame / elevacija** (opseg nesto ispod 180°) | **da 50:1** | — |
+| M3 | pitch | **lakat / elevacija** | **da 25:1** | — |
 | M4 | roll | uvrtanje **podlaktice** (iza lakta) | ne | zupcasti remen |
 | M5 | **pitch** | savijanje grippera, ugao prilaza | ne | **puzni prenos** (samokociv) |
 | M6 | linearni/prstasti | gripper otvaranje/zatvaranje | ne | aktuator, nije zglob |
@@ -81,10 +81,10 @@ projektovati i stampati nezavisno.
 ```
 BAZA
  └─[M1 yaw]──────── rotacija cele ruke
-     └─[M2 pitch]── CIKLOIDNI 40:1    elevacija cele ruke (<180°)
+     └─[M2 pitch]── CIKLOIDNI 50:1    elevacija cele ruke (<180°)
          │
       NADLAKTICA
-         └─[M3 pitch]── CIKLOIDNI 20:1    elevacija podlaktice   (lakat)
+         └─[M3 pitch]── CIKLOIDNI 25:1    elevacija podlaktice   (lakat)
              └─[M4 roll]── remen              uvrtanje podlaktice
                  │
               PODLAKTICA
@@ -168,49 +168,63 @@ korenu i pogon preneti remenom.
 
 ## 3. Prenosni odnosi i dimenzije cikloidnih stepena
 
-**Motori: iskljucivo NEMA17.** To je zadata granica, ne izbor — svi odnosi ispod
-su izvedeni iz nje.
+**POTVRDJENO:** motori **NEMA17 42x48 (0.59 Nm)**, nosivost **1 kg**, materijal
+**ASA**, domet **600 mm**.
 
-Ulazni podaci: domet **600 mm**, teret **500 g** na punom dometu, NEMA17 "jaki"
-(42x48, ~0.59 Nm).
+| Zglob | Odnos | Pinova | Korak | R | Ø diska | Iskoriscenje @1 kg |
+|-------|-------|--------|-------|---|---------|--------------------|
+| **M2 rame** | **50:1** | 51 | 7.5 mm | 60.9 mm | ~137 mm | **63%** |
+| **M3 lakat** | **25:1** | 26 | 9.0 mm | 37.2 mm | ~89 mm | **52%** |
 
-| Zglob | Odnos | Pinova | R | Ø diska | Masa sklopa | Na osovini | Rezerva |
-|-------|-------|--------|---|---------|-------------|------------|---------|
-| **M2 rame** | **40:1** | 41 | 58.7 mm | ~132 mm | ~600 g | 0.36 Nm | **+63%** |
-| **M3 lakat** | **20:1** | 21 | 30.1 mm | ~75 mm | ~180 g | 0.27 Nm | **+116%** |
+Pinovi: **Ø4 mm** celicni cilindricni zatik.
 
-Pinovi: **Ø4 mm** celicni cilindricni zatik. Korak pinova 9 mm na oba stepena.
+### Zasto 50:1 a ne 40:1
 
-### Zasto lakat namerno ima NIZAK odnos
+Sa teretom od 500 g rame je na 40:1 trosilo 61% — komotno. **Teret od 1 kg to
+dize na 78%.** Koracni motor gubi korake iznad ~65% momenta drzanja pri bilo
+kakvoj brzini, pa 78% nije upotrebljivo.
 
-Disk od 75 mm umesto 118 mm stedi **~230 g na sredini ruke**, a ta masa ide
-pravo u opterecenje ramena — sa 11.45 na 10.86 Nm. Lakat ne treba visok odnos
-(moment u laktu je svega 4.1 Nm), pa se visak odnosa placa masom bez koristi.
+Odnos 50:1 spusta rame na **63%**.
 
-### Granica ekscentriciteta ne zavisi od odnosa
+### Zasto korak pinova 7.5 mm na ramenu
+
+Pri koraku od 9 mm odnos 50:1 bi dao disk od **Ø161 mm**. Stiskanjem koraka na
+7.5 mm disk ostaje na **Ø137 mm** — jedva veci od Ø132 koji je vazio za 40:1.
+
+Cena: razmak izmedju pinova pada sa 5.0 na 3.5 mm, i granica ekscentriciteta sa
+1.43 na 1.19 mm (usvojeno E = 1.0 mm). Oboje je jos uvek izvodljivo.
+
+### Lakat namerno ima nizi odnos
+
+Moment u laktu je svega 5.8 Nm pri 1 kg. Visak odnosa se tamo placa masom na
+sredini ruke, a ta masa ide pravo u opterecenje ramena.
+
+### Granica ekscentriciteta
 
 ```
 E_max = R / N = korak_pina / (2*pi)
 ```
 
-Ako se R skalira sa brojem pinova tako da korak ostane isti, granica je
-**konstantna** — pri koraku od 9 mm iznosi 1.43 mm i na 20:1 i na 45:1.
+Zavisi **samo od koraka pinova**, ne od prenosnog odnosa. Visok odnos kosta
+precnik i masu, ne preciznost.
 
-Visok odnos kosta **precnik i masu, ne preciznost.** (Ranija tvrdnja da visok
-odnos tera u uze tolerancije vazi samo pri fiksnom R.)
+### ASA — kompenzacija skupljanja je OBAVEZNA
 
-### Rezerva pri vecem teretu
+ASA se skuplja **0.4–0.7%** pri hladjenju:
 
-| Teret | Rame @40:1 | Rezerva (jaki NEMA17) |
-|-------|------------|------------------------|
-| 500 g | 0.36 Nm | +63% |
-| 750 g | 0.43 Nm | +36% |
-| 1000 g | 0.48 Nm | +23% |
+| Deo | Ø | Skupljanje @0.5% |
+|-----|---|------------------|
+| disk ramena | 137 mm | **0.69 mm** |
+| disk lakta | 89 mm | 0.45 mm |
 
-Nosivost do 1 kg je izvodljiva bez izmene odnosa. Konacnu vrednost potvrditi.
+To je **skoro deset puta vise od projektovanog zazora (0.08 mm)**. Bez
+kompenzacije disk ne naleze.
 
-**Kriticno za proveru:** tacna oznaka NEMA17 motora. Razlika izmedju 42x40
-(0.45 Nm) i 42x60 (0.72 Nm) je 60% i pomera sve gornje rezerve.
+Generator ima parametar `shrinkage` (podrazumevano 0.005) koji uvecava model
+tako da posle hladjenja padne na nominalnu meru.
+
+**Vrednost se OBAVEZNO kalibrise probnim komadom** — zavisi od stampaca,
+temperature komore i geometrije dela. Ne uzimati 0.5% zdravo za gotovo.
 
 ## 3a. Maksimalne duzine segmenata
 

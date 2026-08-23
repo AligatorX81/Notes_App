@@ -94,6 +94,48 @@ Dubina rupe: duzina umetka + 1 mm rezerve za visak materijala.
 
 ---
 
+## ASA — materijal konstrukcije
+
+**Usvojeno: ASA.** Razlog je toplotna otpornost (Tg ~105 °C) — hotend radi na
+200–250 °C, a PLA (Tg ~60 °C) i PETG (Tg ~80 °C) u blizini vrha nisu prihvatljivi.
+ASA je uz to UV stabilna, pa ruka podnosi i rad pored prozora.
+
+### Sta ASA trazi
+
+| Zahtev | Vrednost |
+|--------|----------|
+| Temperatura mlaznice | 250–265 °C |
+| Grejana ploca | 100–110 °C |
+| **Zatvorena komora** | obavezna za velike delove |
+| Hladjenje dela | minimalno ili iskljuceno |
+
+**Komora nije opciona** za disk ramena (Ø137 mm) i kucista reduktora. Bez nje se
+veliki ravni delovi uvijaju i odvajaju od ploce.
+
+### Skupljanje — najvaznija posledica
+
+ASA se skuplja **0.4–0.7%** pri hladjenju. Na disku ramena to je **~0.69 mm**,
+skoro deset puta vise od projektovanog zazora od 0.08 mm.
+
+Generator (`cad/cycloidal_disc.py`) ima parametar `shrinkage`, podrazumevano
+0.005, koji uvecava model tako da posle hladjenja padne na nominalnu meru.
+
+**Kalibracija je obavezna pre prve ozbiljne stampe:**
+
+1. Odstampati probni komad poznate mere (npr. kocka 100x100 mm) u ASA, u komori
+2. Izmeriti ohladjen komad
+3. `shrinkage = (nominalno - izmereno) / nominalno`
+4. Uneti u `ASA_SKUPLJANJE` u generatoru
+
+Vrednost zavisi od stampaca, temperature komore i geometrije dela — ne uzimati
+0.5% zdravo za gotovo.
+
+### Ostale posledice
+- ASA ispusta stiren pri stampi — **ventilacija prostorije obavezna**
+- Lepljenje: aceton lepi ASA odlicno (za spojnice karbonskih cevi koristiti
+  epoksid, ne aceton — aceton ne drzi karbon)
+- Heat-set umeci ulaze lakse nego u PETG, ali paziti da se ne pregreje okolina
+
 ## Tolerancije za FDM stampu
 
 Rupe na FDM stampi izlaze **manje** od nominalne mere.
@@ -109,8 +151,9 @@ Rupe na FDM stampi izlaze **manje** od nominalne mere.
 nego sto se stampa ceo modul. Vrednosti zavise od stampaca, materijala i
 mlaznice.
 
-Cikloidni disk: zazor profila je vec parametar u skripti (`clearance`,
-trenutno 0.08 mm) i stima se posle probne stampe.
+Cikloidni disk: zazor profila je parametar `clearance` (0.08 mm), a skupljanje
+materijala parametar `shrinkage`. Oba se stimuju posle probne stampe — vidi
+sekciju o ASA iznad.
 
 ---
 

@@ -17,36 +17,38 @@ je gotov i radi. Ovde se projektuje mehanika koju ce ti motori pokretati.
 | Motor | Osa | Pogon | Drajver |
 |-------|-----|-------|---------|
 | M1 | yaw — baza | remen ~4:1 | TMC2240 |
-| M2 | pitch — rame | **cikloidni 40:1**, Ø132 mm | TMC2240 |
-| M3 | pitch — lakat | **cikloidni 20:1**, Ø75 mm | TMC2240 |
+| M2 | pitch — rame | **cikloidni 50:1**, Ø137 mm | TMC2240 |
+| M3 | pitch — lakat | **cikloidni 25:1**, Ø89 mm | TMC2240 |
 | M4 | roll — podlaktica | remen | TMC2240 |
 | M5 | pitch — zglob | puzni (samokociv) | TMC2226 |
 | M6 | gripper | — | TMC2226 |
 
 - **5 stepeni slobode + hvataljka = 6 motora**
-- Motori: **iskljucivo NEMA17**
+- Motori: **NEMA17 42x48 (0.59 Nm)**
 - Napajanje: **24 V**
-- Domet **600 mm**, teret **500 g** (potvrditi)
+- Domet **600 mm**, nosivost **1 kg**
+- Materijal: **ASA** (zbog hotenda)
 - Dva rezima: hvatanje/premestanje (pun domet) i **stampa (200–350 mm zona)**
 
 ## Generisanje modela
 
 ```bash
 pip install cadquery
-python3 cad/cycloidal_disc.py shoulder   # 40:1, Ø132 mm
-python3 cad/cycloidal_disc.py elbow      # 20:1, Ø75 mm
+python3 cad/cycloidal_disc.py shoulder   # 50:1, Ø137 mm
+python3 cad/cycloidal_disc.py elbow      # 25:1, Ø89 mm
 python3 cad/torque_calc.py               # momenti po zglobovima
+python3 cad/max_duzine.py                # granice duzina segmenata
+python3 cad/arm_massing.py               # maketa cele ruke
 ```
 
 Izlaz u `cad/out/` kao STEP (za FreeCAD) i STL (za stampu).
 
 ## Otvoreno
 
-1. **Tacna oznaka NEMA17** — 42x40 (0.45 Nm), 42x48 (0.59 Nm) ili 42x60 (0.72 Nm).
-   Racunato je sa 0.59 Nm; razlika pomera sve rezerve. **Blokira potvrdu odnosa.**
-2. **Nosivost** — 500 g, 750 g ili 1 kg
-3. **Materijal** — PETG ili ASA (PLA otpada zbog hotenda)
-4. **Gde se racuna inverzna kinematika** — u firmware-u ili offline pre stampe
+1. **Kalibracija skupljanja ASA** — izmeriti na probnom komadu i uneti u
+   `ASA_SKUPLJANJE`. Bez toga disk ramena promasi meru za ~0.7 mm.
+2. **Gde se racuna inverzna kinematika** — u firmware-u ili offline pre stampe
+3. **Tacan polozaj ploce za stampu** u odnosu na osu baze
 
 ## Veza sa drugim sesijama
 
