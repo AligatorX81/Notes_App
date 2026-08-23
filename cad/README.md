@@ -155,3 +155,60 @@ provereno, a nativna Fusion skripta je ionako netestirana.
 **Alternativa vredna razmatranja:** FreeCAD je nativan na Linuxu, otvara STEP
 sa punim parametarskim editovanjem i ima CadQuery integraciju (Workbench).
 Ako Fusion nije obavezan, otpada cela Wine prica.
+
+---
+
+# Izbor alata — odluka
+
+**CadQuery (profili i delovi) + FreeCAD 1.0 (sklop i crtezi).**
+Oba nativna na Linuxu, oba na istom OpenCascade kernelu, pa STEP putuje izmedju
+njih bez gubitka. Bez Wine-a.
+
+## Zasto ne Blender
+
+Blender je mesh modeler — krug u njemu ne postoji, postoji poligon koji ga
+aproksimira. Greska za otvor lezaja R = 11 mm:
+
+| Segmenata | Poluprecnik | Greska | vs zazor 0.08 mm |
+|-----------|-------------|--------|------------------|
+| 16 | 10.789 mm | 0.211 mm | 2.6x |
+| 32 | 10.947 mm | 0.053 mm | 0.7x |
+| 64 | 10.987 mm | 0.013 mm | 0.2x |
+| 256 | 10.999 mm | 0.0008 mm | zanemarljivo |
+
+Na podrazumevanih 32 segmenta greska je 66% zazora koji projektujemo.
+
+Vise segmenata to numericki popravlja, ali ne resava sustinu: u Blenderu je
+preciznost nesto sto se **rucno odrzava**, a ne sto alat garantuje. Nema pojma
+tolerancije, nema STEP izvoza (dakle nema predaje masinbravaru ni ozbiljnog
+FEM-a), boolean operacije na gustim mrezama su krhke, zaobljenja su
+aproksimacije. CAD kernel umesto toga cuva analiticku definiciju — cilindar je
+osa i poluprecnik, tacnost ~1e-7 mm kroz svaku operaciju.
+
+**Blender ostaje u projektu za render i animaciju gotovog sklopa** (uvoz STL-a).
+To mu je prava uloga.
+
+## Zasto FreeCAD 1.0, a ne ranije verzije
+
+Verzija 1.0 je donela dve stvari koje su je ucinile upotrebljivom za ovo:
+
+- resen **topological naming problem** — ranije bi izmena rane skice razbila
+  kasnije feature-e
+- ugradjen **Assembly Workbench**
+
+Instalacija na Pop!_OS: AppImage sa freecad.org ili flatpak. `apt` cesto nosi
+stariju verziju.
+
+## Odbacene opcije
+
+| Alat | Zasto ne |
+|------|----------|
+| Fusion 360 | nema nativni Linux; samo Wine ili VM |
+| SolidWorks | Windows only |
+| Blender | mesh, ne solid — vidi gore |
+
+## Razmotreno, ostaje kao rezerva
+
+**OnShape** — pun parametarski CAD u pregledacu, radi nativno na Linuxu bez
+instalacije, kvalitet na nivou Fusiona. Kvaka: besplatan plan cini sve dokumente
+javnim.

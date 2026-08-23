@@ -159,6 +159,6 @@ Vazi za oba stepena (M2 i M3):
 
 1. Potvrditi tip ose M4 (pitch ili roll)
 2. Popuniti sekciju 6 na osnovu referentnog videa
-3. Odabrati alat za modelovanje (parametarski kod: CadQuery/OpenSCAD, ili ručni CAD)
+3. ~~Odabrati alat za modelovanje~~ — odluceno: CadQuery + FreeCAD 1.0 (vidi `cad/README.md`)
 4. Proračun momenata po zglobu → konačni prenosni odnosi i izbor motora
 5. Generisanje cikloidnog profila za M2 i M3
